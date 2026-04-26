@@ -12,6 +12,49 @@ const schema = a.schema({
       content: a.string(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+
+  NewsSubscriber: a
+    .model({
+      email: a.string().required(),
+      subscribed_at: a.string().required(),
+    })
+    .identifier(['email', 'subscribed_at'])
+    .authorization((allow) => [allow.publicApiKey()]),
+
+  Member: a
+    .model({
+      email: a.string().required(),
+      applied_at: a.string().required(),
+      name: a.string().required(),
+      affiliation: a.string(),
+      phone: a.string().required(),
+      member_type: a.string().required(),
+      interest: a.string(),
+      motivation: a.string(),
+      status: a.string().required(),
+      recv_channels: a.string(),
+      agreed: a.boolean(),
+      marketing: a.boolean(),
+    })
+    .identifier(['email', 'applied_at'])
+    .authorization((allow) => [allow.publicApiKey()]),
+
+  Partner: a
+    .model({
+      contact_email: a.string().required(),
+      created_at: a.string().required(),
+      org_name: a.string().required(),
+      org_type: a.string().required(),
+      contact_name: a.string().required(),
+      contact_title: a.string(),
+      contact_phone: a.string().required(),
+      programs: a.string(),
+      cooperation_detail: a.string(),
+      partner_agreed: a.boolean(),
+      status: a.string().required(),
+    })
+    .identifier(['contact_email', 'created_at'])
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

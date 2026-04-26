@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="에너지안보환경협회 블로그 – 에너지안보, 기후변화, 공급망, 저탄소 전환에 관한 전문 인사이트">
+    <title>블로그·인사이트 | 에너지안보환경협회</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        .blog-filter { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
+        .blog-filter-btn { padding:8px 18px; border-radius:20px; border:1.5px solid var(--gray-30); background:#fff; font-size:.85rem; font-weight:600; cursor:pointer; transition:all .15s; color:var(--gray-70); }
+        .blog-filter-btn.active, .blog-filter-btn:hover { background:var(--primary); color:#fff; border-color:var(--primary); }
+        .featured-post { display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius-lg); padding:36px; margin-bottom:36px; }
+        .featured-post .thumb { background:linear-gradient(135deg,#054d44,#0a6e61); border-radius:var(--radius); height:280px; display:flex; align-items:center; justify-content:center; font-size:5rem; }
+        .post-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+        .post-card { background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); overflow:hidden; transition:all .2s; }
+        .post-card:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+        .post-thumb { height:180px; display:flex; align-items:center; justify-content:center; font-size:3rem; }
+        .post-body { padding:20px; }
+        .post-meta { font-size:.78rem; color:var(--gray-50); margin-bottom:8px; display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .post-title { font-size:.98rem; font-weight:700; color:var(--dark); margin-bottom:8px; line-height:1.5; }
+        .post-excerpt { font-size:.87rem; color:var(--gray-50); line-height:1.65; }
+        .post-footer { padding:12px 20px; border-top:1px solid var(--gray-10); display:flex; justify-content:space-between; align-items:center; }
+        .sidebar { display:flex; flex-direction:column; gap:24px; }
+        .sidebar-card { background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); padding:22px; }
+        .sidebar-card h3 { font-size:1rem; font-weight:700; margin-bottom:16px; color:var(--dark); }
+        @media(max-width:768px){ .featured-post{grid-template-columns:1fr;} .post-grid{grid-template-columns:1fr;} }
+        @media(min-width:769px) and (max-width:1024px){ .post-grid{grid-template-columns:1fr 1fr;} }
+    </style>
+</head>
+<body>
+
+<div class="public-badge-bar">
+    ✍️ 블로그 콘텐츠 제안 – 에너지·환경 전문가라면 기고를 환영합니다
+    <a href="contact.html">기고 문의 →</a>
+</div>
+
+<nav id="site-nav">
+    <div class="container nav-inner">
+        <a href="index.html" class="nav-logo">
+            <img src="images/esea-symbol.svg" alt="에너지안보환경협회 심볼" class="nav-logo-symbol">
+            <div class="nav-logo-names">
+                <span class="corp-type">사단법인</span>
+                <span class="corp-name">에너지안보환경협회</span>
+                <span class="corp-en">Energy, Security and Environment Association</span>
+            </div>
+        </a>
+        <div class="nav-menu">
+            <a href="about.html">협회소개</a>
+            <a href="briefing.html">브리핑·리포트</a>
+            <a href="blog.html" class="active">블로그·인사이트</a>
+            <a href="youtube.html">유튜브·영상</a>
+            <a href="transparency.html">공익·투명성</a>
+            <a href="contact.html">문의하기</a>
+        </div>
+        <div class="nav-cta">
+            <a href="partnership.html" class="btn btn-outline">기관협력</a>
+            <a href="membership.html" class="btn btn-primary">개인회원 가입</a>
+        </div>
+        <button class="nav-hamburger">☰</button>
+    </div>
+    <div class="nav-mobile">
+        <a href="about.html">협회소개</a>
+        <a href="briefing.html">브리핑·리포트</a>
+        <a href="blog.html">블로그·인사이트</a>
+        <a href="youtube.html">유튜브·영상</a>
+        <a href="transparency.html">공익·투명성</a>
+        <a href="membership.html">개인회원 가입</a>
+        <a href="partnership.html">기관협력 제안</a>
+        <a href="contact.html">문의하기</a>
+    </div>
+</nav>
+
+<!-- 히어로 -->
+<section class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb"><a href="index.html">홈</a><span>/</span><span>블로그·인사이트</span></nav>
+        <h1>블로그·인사이트</h1>
+        <p>에너지안보, 기후변화, 공급망 리스크, 저탄소 전환에 관한 전문 인사이트.<br>모든 콘텐츠는 무료로 공개합니다.</p>
+    </div>
+</section>
+
+<!-- 블로그 본문 -->
+<section style="background:#f8fafc;">
+    <div class="container">
+        <div style="display:grid; grid-template-columns:1fr 280px; gap:40px; align-items:start;">
+            <!-- 메인 콘텐츠 -->
+            <div>
+                <!-- 주요 포스트 -->
+                <div class="featured-post fade-in">
+                    <div class="thumb">⚡</div>
+                    <div>
+                        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                            <span class="tag tag-red">에너지안보</span>
+                            <span class="tag tag-accent">긴급</span>
+                        </div>
+                        <h2 style="font-size:1.4rem; font-weight:800; color:#111; margin-bottom:12px; line-height:1.4;">
+                            호르무즈 봉쇄 시나리오가 한국 에너지에 미치는 영향 – 4차 긴급진단 해설
+                        </h2>
+                        <div style="font-size:.82rem; color:#6b7280; margin-bottom:14px; display:flex; gap:12px;">
+                            <span>📅 2026.04.10</span>
+                            <span>✍️ 에너지안보환경협회 연구팀</span>
+                            <span>👁️ 1,240회</span>
+                        </div>
+                        <p style="color:#374151; line-height:1.75; font-size:.95rem; margin-bottom:20px;">
+                            2026년 3월 이란의 호르무즈 해협 봉쇄 위협이 다시 수면 위로 올라왔습니다.
+                            협회가 발행한 4차 긴급진단을 바탕으로, 봉쇄 시나리오가 한국의 에너지 수급에
+                            미치는 구체적 영향과 대응 전략을 해설합니다.
+                        </p>
+                        <a href="#" class="btn btn-primary">전체 글 읽기 →</a>
+                    </div>
+                </div>
+
+                <!-- 카테고리 필터 -->
+                <div class="blog-filter fade-in">
+                    <button class="blog-filter-btn active">전체</button>
+                    <button class="blog-filter-btn">에너지안보</button>
+                    <button class="blog-filter-btn">저탄소·기후</button>
+                    <button class="blog-filter-btn">공급망</button>
+                    <button class="blog-filter-btn">정책·제도</button>
+                    <button class="blog-filter-btn">협회 활동</button>
+                </div>
+
+                <!-- 포스트 그리드 -->
+                <div class="post-grid">
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#e6f4f1,#d1fae5);">🌱</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-primary" style="font-size:.7rem;">저탄소·기후</span>
+                                <span>2026.03.20</span>
+                            </div>
+                            <h3 class="post-title">2030 NDC 목표와 에너지 믹스 – 현실적 경로는?</h3>
+                            <p class="post-excerpt">한국의 NDC 목표 달성을 위한 에너지 믹스 변화와 재생에너지 확대의 현실적 경로를 검토합니다. 원전·재생에너지 비율 논쟁과 실현 가능한 시나리오를 제시합니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 856회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);">🔋</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-blue" style="font-size:.7rem;">공급망</span>
+                                <span>2026.03.05</span>
+                            </div>
+                            <h3 class="post-title">핵심광물 공급망 리스크와 배터리 산업의 미래</h3>
+                            <p class="post-excerpt">리튬·코발트·니켈 등 핵심광물 공급망 불안정이 한국 배터리 산업에 미치는 영향과 대응 전략을 제시합니다. 중국 의존도 리스크와 다변화 경로를 분석합니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 934회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">☀️</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-accent" style="font-size:.7rem;">정책·제도</span>
+                                <span>2026.02.18</span>
+                            </div>
+                            <h3 class="post-title">전기요금 현실화와 에너지 빈곤층 보호 – 균형점 찾기</h3>
+                            <p class="post-excerpt">에너지 전환 비용 부담과 전기요금 현실화의 필요성, 동시에 에너지 빈곤층 보호를 위한 정책 설계 방향을 논의합니다. 해외 사례와 국내 적용 방안을 제시합니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 712회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);">🌊</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-primary" style="font-size:.7rem;">에너지안보</span>
+                                <span>2026.02.05</span>
+                            </div>
+                            <h3 class="post-title">중동 에너지 지정학: 이스라엘-이란 갈등의 의미</h3>
+                            <p class="post-excerpt">중동 지정학 갈등이 에너지 시장에 미치는 영향을 분석합니다. 이스라엘-이란 갈등 고조와 한국 에너지 안보에 대한 시사점을 제시합니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 1,105회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#f3f4f6,#e5e7eb);">🏭</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-blue" style="font-size:.7rem;">정책·제도</span>
+                                <span>2026.01.22</span>
+                            </div>
+                            <h3 class="post-title">탄소국경조정제도(CBAM)와 한국 수출 산업의 대응</h3>
+                            <p class="post-excerpt">EU의 탄소국경조정제도 본격 시행에 따른 한국 수출 산업의 영향과 대응 전략을 분석합니다. 철강·시멘트·화학 산업을 중심으로 구체적 시나리오를 제시합니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 678회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);">💨</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-primary" style="font-size:.7rem;">저탄소·기후</span>
+                                <span>2026.01.08</span>
+                            </div>
+                            <h3 class="post-title">그린수소 경제의 현실 – 비용·인프라·시장 과제</h3>
+                            <p class="post-excerpt">그린수소 생산 비용 현황과 상업화까지의 현실적 경로를 분석합니다. 국내외 수소 경제 추진 현황과 한국의 전략적 포지셔닝을 제시합니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 891회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#fef3c7,#fde68a);">🌏</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-accent" style="font-size:.7rem;">협회 활동</span>
+                                <span>2025.03.15</span>
+                            </div>
+                            <h3 class="post-title">[후기] 15차 콜로키움 – 에너지 전환과 공급망 안보</h3>
+                            <p class="post-excerpt">2025년 3월 개최된 제15차 에너지안보환경 콜로키움 결과를 정리합니다. 전문가 발표 요약, 주요 토론 내용, 정책 제언을 담은 후기입니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 542회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#eff6ff,#dbeafe);">⚛️</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-blue" style="font-size:.7rem;">에너지안보</span>
+                                <span>2025.01.10</span>
+                            </div>
+                            <h3 class="post-title">소형모듈원전(SMR)의 가능성과 한국의 전략적 기회</h3>
+                            <p class="post-excerpt">글로벌 SMR 시장 동향과 한국의 기술 경쟁력을 분석합니다. SMR이 에너지안보와 탄소중립에서 갖는 전략적 의미와 도전 과제를 논의합니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 1,328회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                    <article class="post-card fade-in">
+                        <div class="post-thumb" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);">🌡️</div>
+                        <div class="post-body">
+                            <div class="post-meta">
+                                <span class="tag tag-red" style="font-size:.7rem;">저탄소·기후</span>
+                                <span>2024.11.20</span>
+                            </div>
+                            <h3 class="post-title">기후위기 시대의 에너지안보 – 두 과제의 통합 전략</h3>
+                            <p class="post-excerpt">기후 대응과 에너지 안보는 상충하는가? 두 과제를 동시에 달성하는 통합 전략의 가능성과 방법론을 제시합니다. 협회의 공익적 관점을 담은 정책 제언입니다.</p>
+                        </div>
+                        <div class="post-footer">
+                            <span style="font-size:.78rem; color:#6b7280;">👁️ 1,062회</span>
+                            <a href="#" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- 더보기 -->
+                <div style="text-align:center; margin-top:32px;">
+                    <button class="btn btn-outline btn-lg" id="load-more">더 많은 글 보기</button>
+                </div>
+            </div>
+
+            <!-- 사이드바 -->
+            <aside class="sidebar">
+                <!-- 검색 -->
+                <div class="sidebar-card fade-in">
+                    <h3>🔍 검색</h3>
+                    <div style="display:flex; gap:8px;">
+                        <input type="text" placeholder="검색어 입력" class="form-control" style="flex:1;">
+                        <button class="btn btn-primary" style="padding:12px;">→</button>
+                    </div>
+                </div>
+
+                <!-- 카테고리 -->
+                <div class="sidebar-card fade-in">
+                    <h3>📂 카테고리</h3>
+                    <ul style="display:flex; flex-direction:column; gap:8px;">
+                        <li style="display:flex; justify-content:space-between; font-size:.88rem; padding:6px 0; border-bottom:1px solid #f3f4f6;">
+                            <a href="#" style="color:#374151; hover:color:#0a6e61;">에너지안보</a><span class="tag tag-primary" style="font-size:.72rem;">18</span>
+                        </li>
+                        <li style="display:flex; justify-content:space-between; font-size:.88rem; padding:6px 0; border-bottom:1px solid #f3f4f6;">
+                            <a href="#" style="color:#374151;">저탄소·기후</a><span class="tag tag-primary" style="font-size:.72rem;">12</span>
+                        </li>
+                        <li style="display:flex; justify-content:space-between; font-size:.88rem; padding:6px 0; border-bottom:1px solid #f3f4f6;">
+                            <a href="#" style="color:#374151;">공급망 리스크</a><span class="tag tag-primary" style="font-size:.72rem;">9</span>
+                        </li>
+                        <li style="display:flex; justify-content:space-between; font-size:.88rem; padding:6px 0; border-bottom:1px solid #f3f4f6;">
+                            <a href="#" style="color:#374151;">정책·제도</a><span class="tag tag-primary" style="font-size:.72rem;">14</span>
+                        </li>
+                        <li style="display:flex; justify-content:space-between; font-size:.88rem; padding:6px 0;">
+                            <a href="#" style="color:#374151;">협회 활동</a><span class="tag tag-primary" style="font-size:.72rem;">7</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 인기 글 -->
+                <div class="sidebar-card fade-in">
+                    <h3>🔥 인기 글</h3>
+                    <ul style="display:flex; flex-direction:column; gap:12px;">
+                        <li style="font-size:.85rem; padding-bottom:12px; border-bottom:1px solid #f3f4f6;">
+                            <a href="#" style="color:#111; font-weight:600; line-height:1.45; display:block; margin-bottom:4px;">소형모듈원전(SMR)의 가능성과 한국의 전략적 기회</a>
+                            <span style="color:#9ca3af; font-size:.75rem;">👁️ 1,328회</span>
+                        </li>
+                        <li style="font-size:.85rem; padding-bottom:12px; border-bottom:1px solid #f3f4f6;">
+                            <a href="#" style="color:#111; font-weight:600; line-height:1.45; display:block; margin-bottom:4px;">호르무즈 봉쇄 시나리오가 한국 에너지에 미치는 영향</a>
+                            <span style="color:#9ca3af; font-size:.75rem;">👁️ 1,240회</span>
+                        </li>
+                        <li style="font-size:.85rem;">
+                            <a href="#" style="color:#111; font-weight:600; line-height:1.45; display:block; margin-bottom:4px;">기후위기 시대의 에너지안보 – 두 과제의 통합 전략</a>
+                            <span style="color:#9ca3af; font-size:.75rem;">👁️ 1,062회</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 브리핑 구독 -->
+                <div class="sidebar-card fade-in" style="background:linear-gradient(135deg,#054d44,#0a6e61); border:none; color:#fff;">
+                    <h3 style="color:#fff;">📬 브리핑 구독</h3>
+                    <p style="font-size:.88rem; opacity:.85; margin-bottom:16px; line-height:1.65;">새 글·긴급진단 알림을 이메일로 받으세요.</p>
+                    <form id="sidebar-sub-form">
+                        <input type="email" name="email" placeholder="이메일 주소" class="form-control" style="margin-bottom:10px; border-color:rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;" required>
+                        <button type="submit" class="btn btn-accent" style="width:100%; justify-content:center;">무료 구독</button>
+                    </form>
+                </div>
+
+                <!-- 태그 클라우드 -->
+                <div class="sidebar-card fade-in">
+                    <h3>🏷️ 태그</h3>
+                    <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                        <span class="tag tag-primary" style="cursor:pointer;">#에너지안보</span>
+                        <span class="tag tag-primary" style="cursor:pointer;">#기후변화</span>
+                        <span class="tag tag-blue" style="cursor:pointer;">#공급망</span>
+                        <span class="tag tag-accent" style="cursor:pointer;">#수소</span>
+                        <span class="tag tag-red" style="cursor:pointer;">#긴급진단</span>
+                        <span class="tag tag-primary" style="cursor:pointer;">#NDC</span>
+                        <span class="tag tag-blue" style="cursor:pointer;">#SMR</span>
+                        <span class="tag tag-accent" style="cursor:pointer;">#CBAM</span>
+                        <span class="tag tag-primary" style="cursor:pointer;">#콜로키움</span>
+                        <span class="tag tag-blue" style="cursor:pointer;">#배터리</span>
+                    </div>
+                </div>
+
+                <!-- 기고 안내 -->
+                <div class="sidebar-card fade-in" style="border:2px dashed var(--primary-lt);">
+                    <h3>✍️ 기고 환영</h3>
+                    <p style="font-size:.87rem; color:#374151; line-height:1.65; margin-bottom:16px;">에너지·환경 분야 전문가 칼럼·기고를 환영합니다. 검토 후 게재합니다.</p>
+                    <a href="contact.html" class="btn btn-outline" style="width:100%; justify-content:center; font-size:.85rem;">기고 문의하기</a>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="join-cta">
+    <div class="container text-center">
+        <h2 class="section-title" style="color:#fff;">에너지안보환경협회의 인사이트를<br>정기적으로 받아보세요</h2>
+        <p class="section-sub" style="color:rgba(255,255,255,.8); margin:16px auto 32px;">개인회원 가입 또는 무료 브리핑 구독으로 시작하세요.</p>
+        <div class="join-cta-btns">
+            <a href="membership.html" class="btn btn-accent btn-lg">🙋 개인회원 가입 (연 5만원)</a>
+            <a href="briefing.html" class="btn btn-white btn-lg">📋 무료 브리핑 구독</a>
+        </div>
+    </div>
+</section>
+
+<footer id="site-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <div class="logo">
+                    <img src="images/esea-logo-white.svg" alt="사단법인 에너지안보환경협회"
+                         style="height:48px; width:auto;">
+                </div>
+                <p>에너지안보·저탄소 전환·환경 현안을 공익의 관점에서 연구·교육·토론하는 비영리 공익 플랫폼입니다.</p>
+            </div>
+            <div class="footer-col">
+                <h4>협회 안내</h4>
+                <ul>
+                    <li><a href="about.html">협회소개</a></li>
+                    <li><a href="transparency.html">공익·투명성</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>콘텐츠</h4>
+                <ul>
+                    <li><a href="briefing.html">브리핑·리포트</a></li>
+                    <li><a href="blog.html">블로그·인사이트</a></li>
+                    <li><a href="youtube.html">유튜브·영상</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>연락처</h4>
+                <div class="footer-contact">
+                    <p>📞 02-6269-5831</p>
+                    <p>✉️ <a href="mailto:kkorokk@hanmail.net">kkorokk@hanmail.net</a></p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2022 사단법인 에너지안보환경협회. 주무관청: 산업통상자원부</div>
+            <div class="footer-bottom-links">
+                <a href="transparency.html">공익·투명성</a>
+                <a href="contact.html">문의하기</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script>
+    // 블로그 필터
+    document.querySelectorAll('.blog-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.blog-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+
+    // 사이드바 구독
+    document.getElementById('sidebar-sub-form')?.addEventListener('submit', async e => {
+        e.preventDefault();
+        const email = e.target.email.value;
+        try {
+            await fetch('tables/subscribers', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, source:'blog', subscribed_at: new Date().toISOString()}) });
+        } catch {}
+        const btn = e.target.querySelector('button');
+        btn.textContent = '✓ 완료!';
+        btn.disabled = true;
+        e.target.reset();
+    });
+
+    // 더보기
+    document.getElementById('load-more')?.addEventListener('click', () => {
+        alert('더 많은 글이 준비 중입니다. 브리핑을 구독하시면 새 글 발행 시 알림을 드립니다.');
+    });
+</script>
+</body>
+</html>
