@@ -1,6 +1,6 @@
 import type { APIGatewayProxyHandler } from 'aws-lambda';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, UpdateCommand } from '@aws-sdk/lib-dynamodb';
 
 // Declare process global for TypeScript
 declare const process: {
@@ -64,20 +64,29 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       };
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     // Get a table name from the environment
     const tableName = process.env.NEWS_SUBSCRIBER_TABLE_NAME;
     if (!tableName) {
       throw new Error('Table name not configured');
     }
 
-    const subscribed_at = new Date().toISOString();
+    const now = new Date().toISOString();
+    const subscribed_at = now;
 
-    // Store in DynamoDB
-    const command = new PutCommand({
+    // Upsert by email so duplicate subscription attempts update the same item
+    const command = new UpdateCommand({
       TableName: tableName,
-      Item: {
-        email: email.toLowerCase().trim(),
-        subscribed_at,
+      Key: {
+        email: normalizedEmail,
+      },
+      UpdateExpression:
+        'SET subscribed_at = :subscribedAt, updatedAt = :updatedAt, createdAt = if_not_exists(createdAt, :createdAt)',
+      ExpressionAttributeValues: {
+        ':subscribedAt': subscribed_at,
+        ':updatedAt': now,
+        ':createdAt': now,
       },
     });
 
@@ -88,7 +97,7 @@ export const handler: APIGatewayProxyHandler = async (event) => {
       headers,
       body: JSON.stringify({
         message: 'Successfully subscribed to newsletter',
-        email,
+        email: normalizedEmail,
         subscribed_at,
       }),
     };

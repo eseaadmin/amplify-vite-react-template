@@ -18,7 +18,7 @@ const schema = a.schema({
       email: a.string().required(),
       subscribed_at: a.string().required(),
     })
-    .identifier(['email', 'subscribed_at'])
+    .identifier(['email'])
     .authorization((allow) => [allow.publicApiKey()]),
 
   Member: a
