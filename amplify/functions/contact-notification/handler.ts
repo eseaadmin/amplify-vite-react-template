@@ -30,6 +30,7 @@ export const handler: DynamoDBStreamHandler = async (event) => {
       const newImage = record.dynamodb.NewImage;
 
       const contactData = {
+        messageId: newImage.messageId?.S || '',
         name: newImage.name?.S || '',
         email: newImage.email?.S || '',
         affiliation: newImage.affiliation?.S || '',
@@ -70,6 +71,7 @@ ${contactData.message}
 기타 정보
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+문의 ID: ${contactData.messageId}
 개인정보 수집·이용 동의: ${contactData.agreed}
 처리 상태: ${contactData.status}
 접수일시: ${new Date(contactData.created_at).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}

@@ -58,6 +58,7 @@ const schema = a.schema({
 
   ContactInquiry: a
     .model({
+      messageId: a.string().required(),
       email: a.string().required(),
       created_at: a.string().required(),
       name: a.string().required(),
@@ -70,7 +71,7 @@ const schema = a.schema({
       agreed: a.boolean(),
       status: a.string().required(),
     })
-    .identifier(['email', 'created_at'])
+    .identifier(['messageId', 'created_at'])
     .authorization((allow) => [allow.publicApiKey()]),
 });
 

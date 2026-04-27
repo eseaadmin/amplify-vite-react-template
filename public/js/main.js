@@ -237,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.disabled = true;
       const formData = new FormData(contactForm);
       const data = Object.fromEntries(formData.entries());
+      const messageId = crypto.randomUUID();
       try {
         const { endpoint, apiKey } = await getAmplifyConfig();
         const res = await fetch(endpoint, {
@@ -247,10 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify({
             query: `mutation CreateContactInquiry($input: CreateContactInquiryInput!) {
-              createContactInquiry(input: $input) { email created_at }
+              createContactInquiry(input: $input) { messageId created_at }
             }`,
             variables: {
               input: {
+                messageId,
                 name: data.name || '',
                 affiliation: data.affiliation || '',
                 phone: data.phone || '',
