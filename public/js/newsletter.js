@@ -49,6 +49,16 @@ async function subscribeToNewsletter(email) {
     return result.data.createNewsSubscriber;
 }
 
+function isAlreadySubscribedError(error) {
+    const message = String(error?.message || '').toLowerCase();
+    return (
+        message.includes('already') ||
+        message.includes('exists') ||
+        message.includes('duplicate') ||
+        message.includes('conditionalcheckfailed')
+    );
+}
+
 function handleNewsletterForm(form, buttonText = '무료 구독하기') {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -73,8 +83,13 @@ function handleNewsletterForm(form, buttonText = '무료 구독하기') {
             form.reset();
         } catch (error) {
             console.error('구독 실패:', error);
-            btn.textContent = '구독 실패 - 다시 시도해주세요';
-            btn.style.background = '#dc2626';
+            if (isAlreadySubscribedError(error)) {
+                btn.textContent = '이미 구독중입니다';
+                btn.style.background = '#0f766e';
+            } else {
+                btn.textContent = '구독 실패 - 다시 시도해주세요';
+                btn.style.background = '#dc2626';
+            }
             btn.disabled = false;
 
             setTimeout(() => {

@@ -88,15 +88,21 @@ export const handler: APIGatewayProxyHandler = async (event) => {
         ':updatedAt': now,
         ':createdAt': now,
       },
+      ReturnValues: 'ALL_OLD',
     });
 
-    await docClient.send(command);
+    const result = await docClient.send(command);
+    const alreadySubscribed = Boolean(result.Attributes?.email);
+    const message = alreadySubscribed
+      ? 'Email already subscribed. Subscription timestamp refreshed.'
+      : 'Successfully subscribed to newsletter';
 
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
-        message: 'Successfully subscribed to newsletter',
+        message,
+        alreadySubscribed,
         email: normalizedEmail,
         subscribed_at,
       }),
