@@ -1,16 +1,18 @@
-// Newsletter subscription handler using direct GraphQL API calls
+// Newsletter subscription handler using direct GraphQL API calls.
+// Wrapped in an IIFE to avoid global name collisions with other page scripts.
+(() => {
+let newsletterAmplifyConfig = null;
 
-let _amplifyConfig = null;
-async function getAmplifyConfig() {
-  if (!_amplifyConfig) {
+async function getNewsletterAmplifyConfig() {
+  if (!newsletterAmplifyConfig) {
     const res = await fetch('/amplify_outputs.json');
-    _amplifyConfig = await res.json();
+    newsletterAmplifyConfig = await res.json();
   }
-  return { endpoint: _amplifyConfig.data.url, apiKey: _amplifyConfig.data.api_key };
+  return { endpoint: newsletterAmplifyConfig.data.url, apiKey: newsletterAmplifyConfig.data.api_key };
 }
 
 async function subscribeToNewsletter(email) {
-    const { endpoint, apiKey } = await getAmplifyConfig();
+    const { endpoint, apiKey } = await getNewsletterAmplifyConfig();
 
     const mutation = `
         mutation CreateNewsSubscriber($email: String!, $subscribed_at: String!) {
@@ -94,3 +96,4 @@ document.addEventListener('DOMContentLoaded', () => {
         handleNewsletterForm(subForm, '무료 구독');
     }
 });
+})();
