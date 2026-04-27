@@ -1,0 +1,13 @@
+{
+  "name": "contact-notification",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "nodemailer": "^8.0.6"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^20.0.0",
+    "@types/nodemailer": "^6.4.17"
+  }
+}

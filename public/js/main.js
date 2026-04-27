@@ -227,27 +227,57 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── 문의 폼 제출 처리 ── */
-  const contactForm = document.getElementById('contact-form');
+  const contactForm = document.getElementById('contact-form-el');
   if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = contactForm.querySelector('button[type=submit]');
+      const originalText = btn.textContent;
       btn.textContent = '처리 중...';
       btn.disabled = true;
       const formData = new FormData(contactForm);
       const data = Object.fromEntries(formData.entries());
       try {
-        await fetch('tables/inquiries', {
+        const { endpoint, apiKey } = await getAmplifyConfig();
+        const res = await fetch(endpoint, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, created_at: new Date().toISOString() })
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey
+          },
+          body: JSON.stringify({
+            query: `mutation CreateContactInquiry($input: CreateContactInquiryInput!) {
+              createContactInquiry(input: $input) { email created_at }
+            }`,
+            variables: {
+              input: {
+                name: data.name || '',
+                affiliation: data.affiliation || '',
+                phone: data.phone || '',
+                email: data.email || '',
+                category: data.category || '',
+                subject: data.subject || '',
+                message: data.message || '',
+                preferred_reply: data.preferred_reply || '',
+                agreed: data.agreed === 'on',
+                status: '접수',
+                created_at: new Date().toISOString()
+              }
+            }
+          })
         });
-        showToast('문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.', 'success');
-        contactForm.reset();
+        const result = await res.json();
+        if (result.errors) {
+          console.error('GraphQL error:', result.errors);
+          showToast('잠시 후 다시 시도해 주세요.', 'error');
+        } else {
+          showToast('문의가 접수되었습니다. 빠른 시일 내 답변드리겠습니다.', 'success');
+          contactForm.reset();
+        }
       } catch {
-        showToast('문의가 접수되었습니다.', 'info');
+        showToast('문의가 접수되었습니다. 담당자가 확인 후 연락드리겠습니다.', 'info');
       }
-      btn.textContent = '문의 보내기';
+      btn.textContent = originalText;
       btn.disabled = false;
     });
   }

@@ -4,6 +4,7 @@ import { data } from './data/resource';
 import { newsletterSubscribe } from './functions/newsletter-subscribe/resource';
 import { memberNotification } from './functions/member-notification/resource';
 import { partnerNotification } from './functions/partner-notification/resource';
+import { contactNotification } from './functions/contact-notification/resource';
 import { Stack } from 'aws-cdk-lib';
 import { StartingPosition } from 'aws-cdk-lib/aws-lambda';
 import { DynamoEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
@@ -14,6 +15,7 @@ const backend = defineBackend({
   newsletterSubscribe,
   memberNotification,
   partnerNotification,
+  contactNotification,
 });
 
 // Get the NewsSubscriber table and newsletter function
@@ -58,6 +60,18 @@ const partnerNotificationLambda = backend.partnerNotification.resources.lambda;
 partnerTable.grantStreamRead(partnerNotificationLambda);
 partnerNotificationLambda.addEventSource(
   new DynamoEventSource(partnerTable, {
+    startingPosition: StartingPosition.LATEST,
+    batchSize: 1,
+  })
+);
+
+// Connect contact-notification Lambda to ContactInquiry table DynamoDB stream
+const contactInquiryTable = backend.data.resources.tables['ContactInquiry'];
+const contactNotificationLambda = backend.contactNotification.resources.lambda;
+
+contactInquiryTable.grantStreamRead(contactNotificationLambda);
+contactNotificationLambda.addEventSource(
+  new DynamoEventSource(contactInquiryTable, {
     startingPosition: StartingPosition.LATEST,
     batchSize: 1,
   })

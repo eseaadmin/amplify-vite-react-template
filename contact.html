@@ -325,26 +325,5 @@
 </footer>
 
 <script src="/js/main.js"></script>
-<script>
-  document.getElementById('contact-form-el')?.addEventListener('submit', async e => {
-    e.preventDefault();
-    const btn = e.target.querySelector('button[type=submit]');
-    btn.textContent = '처리 중...'; btn.disabled = true;
-    const fd = new FormData(e.target);
-    const data = Object.fromEntries(fd.entries());
-    try {
-      await fetch('tables/inquiries', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ ...data, status: '접수', created_at: new Date().toISOString() })
-      });
-      alert('✅ 문의가 접수되었습니다!\n영업일 1~2일 내에 답변드리겠습니다.\n감사합니다.');
-      e.target.reset();
-    } catch {
-      alert('문의가 접수되었습니다. 감사합니다.');
-    }
-    btn.textContent = '💬 문의 보내기'; btn.disabled = false;
-  });
-</script>
 </body>
 </html>

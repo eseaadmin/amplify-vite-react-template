@@ -55,6 +55,23 @@ const schema = a.schema({
     })
     .identifier(['contact_email', 'created_at'])
     .authorization((allow) => [allow.publicApiKey()]),
+
+  ContactInquiry: a
+    .model({
+      email: a.string().required(),
+      created_at: a.string().required(),
+      name: a.string().required(),
+      affiliation: a.string(),
+      phone: a.string(),
+      category: a.string(),
+      subject: a.string().required(),
+      message: a.string().required(),
+      preferred_reply: a.string(),
+      agreed: a.boolean(),
+      status: a.string().required(),
+    })
+    .identifier(['email', 'created_at'])
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
