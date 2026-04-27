@@ -425,6 +425,7 @@
 </footer>
 
 <script src="/js/main.js"></script>
+<script src="/js/newsletter.js"></script>
 <script>
     // 블로그 필터
     document.querySelectorAll('.blog-filter-btn').forEach(btn => {
@@ -432,19 +433,6 @@
             document.querySelectorAll('.blog-filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
         });
-    });
-
-    // 사이드바 구독
-    document.getElementById('sidebar-sub-form')?.addEventListener('submit', async e => {
-        e.preventDefault();
-        const email = e.target.email.value;
-        try {
-            await fetch('tables/subscribers', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, source:'blog', subscribed_at: new Date().toISOString()}) });
-        } catch {}
-        const btn = e.target.querySelector('button');
-        btn.textContent = '✓ 완료!';
-        btn.disabled = true;
-        e.target.reset();
     });
 
     // 더보기

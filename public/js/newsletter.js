@@ -107,5 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (subForm) {
         handleNewsletterForm(subForm, '무료 구독');
     }
+
+    const sidebarSubForm = document.getElementById('sidebar-sub-form');
+    if (sidebarSubForm) {
+        handleNewsletterForm(sidebarSubForm, '무료 구독');
+    }
 });
 })();
