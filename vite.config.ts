@@ -26,5 +26,18 @@ export default defineConfig({
   publicDir: 'public',
   build: {
     outDir: 'dist',
+    rollupOptions: {
+      input: {
+        index: resolve(__dirname, 'index.html'),
+        about: resolve(__dirname, 'about.html'),
+        blog: resolve(__dirname, 'blog.html'),
+        briefing: resolve(__dirname, 'briefing.html'),
+        contact: resolve(__dirname, 'contact.html'),
+        membership: resolve(__dirname, 'membership.html'),
+        partnership: resolve(__dirname, 'partnership.html'),
+        transparency: resolve(__dirname, 'transparency.html'),
+        youtube: resolve(__dirname, 'youtube.html'),
+      },
+    },
   },
 })
