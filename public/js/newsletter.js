@@ -52,10 +52,7 @@ async function subscribeToNewsletter(email) {
 function isAlreadySubscribedError(error) {
     const message = String(error?.message || '').toLowerCase();
     return (
-        message.includes('already') ||
-        message.includes('exists') ||
-        message.includes('duplicate') ||
-        message.includes('conditionalcheckfailed')
+        message.includes('the conditional request failed (service: dynamodb, status code: 400')
     );
 }
 
