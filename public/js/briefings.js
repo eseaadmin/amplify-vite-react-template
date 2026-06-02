@@ -1,4 +1,4 @@
-// Briefings GraphQL client. Loaded by admin.html and briefing.html.
+// Briefings GraphQL client. Loaded by content.html and briefing.html.
 (() => {
   let cachedConfig = null;
 
