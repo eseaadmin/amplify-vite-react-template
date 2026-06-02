@@ -73,6 +73,21 @@ const schema = a.schema({
     })
     .identifier(['messageId', 'created_at'])
     .authorization((allow) => [allow.publicApiKey()]),
+
+  Briefing: a
+    .model({
+      title: a.string().required(),
+      category: a.string().required(),
+      created_at: a.string().required(),
+      publish_date: a.string(),
+      author: a.string(),
+      tags: a.string(),
+      summary: a.string(),
+      content: a.string(),
+      status: a.string(),
+      is_featured: a.boolean(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
