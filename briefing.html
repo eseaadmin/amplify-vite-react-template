@@ -19,8 +19,8 @@
     .report-body .title { font-weight:700; color:var(--dark); font-size:1.02rem; margin-bottom:4px; }
     .report-body .meta  { font-size:.82rem; color:var(--gray-50); display:flex; gap:12px; flex-wrap:wrap; }
     .report-action { display:flex; gap:8px; }
-    .report-detail { display:none; grid-column:2 / -1; border-top:1px solid var(--gray-20); padding-top:18px; color:#374151; line-height:1.75; }
-    .report-card.expanded .report-detail { display:block; }
+    .report-detail { display:block; grid-column:2 / -1; border-top:1px solid var(--gray-20); padding-top:18px; color:#374151; line-height:1.75; }
+    .report-card.collapsed .report-detail { display:none; }
     .report-detail h2, .report-detail h3 { color:var(--dark); font-weight:800; margin:18px 0 8px; }
     .report-detail p, .report-detail ul, .report-detail ol, .report-detail blockquote { margin:10px 0; }
     .report-detail ul, .report-detail ol { padding-left:22px; }
@@ -320,8 +320,8 @@
   function toggleBriefingContent(id, button) {
     const card = document.getElementById(`briefing-${id}`);
     if (!card) return;
-    const expanded = card.classList.toggle('expanded');
-    if (button) button.textContent = expanded ? '접기' : '전문 보기';
+    const collapsed = card.classList.toggle('collapsed');
+    if (button) button.textContent = collapsed ? '전문 보기' : '접기';
   }
 
   function renderBriefingCard(b, index) {
@@ -345,7 +345,7 @@
           <p style="font-size:.88rem; color:#374151; margin-top:8px; line-height:1.65;">${escapeHtml(b.summary||'')}</p>
         </div>
         <div class="report-action">
-          <button type="button" class="btn btn-outline briefing-toggle" data-briefing-id="${escapeHtml(b.id)}" style="font-size:.82rem; padding:8px 14px;">전문 보기</button>
+          <button type="button" class="btn btn-outline briefing-toggle" data-briefing-id="${escapeHtml(b.id)}" style="font-size:.82rem; padding:8px 14px;">접기</button>
         </div>
         <div class="report-detail">${sanitizeBriefingContent(b.content)}</div>
       </div>`;
@@ -386,8 +386,8 @@
     if (location.hash.startsWith('#briefing-')) {
       const card = document.querySelector(location.hash);
       const button = card?.querySelector('.report-action button');
-      if (card && !card.classList.contains('expanded')) {
-        card.classList.add('expanded');
+      if (card) {
+        card.classList.remove('collapsed');
         if (button) button.textContent = '접기';
         card.scrollIntoView({ block: 'start' });
       }
