@@ -19,6 +19,17 @@
     .report-body .title { font-weight:700; color:var(--dark); font-size:1.02rem; margin-bottom:4px; }
     .report-body .meta  { font-size:.82rem; color:var(--gray-50); display:flex; gap:12px; flex-wrap:wrap; }
     .report-action { display:flex; gap:8px; }
+    .report-detail { display:none; grid-column:2 / -1; border-top:1px solid var(--gray-20); padding-top:18px; color:#374151; line-height:1.75; }
+    .report-card.expanded .report-detail { display:block; }
+    .report-detail h2, .report-detail h3 { color:var(--dark); font-weight:800; margin:18px 0 8px; }
+    .report-detail p, .report-detail ul, .report-detail ol, .report-detail blockquote { margin:10px 0; }
+    .report-detail ul, .report-detail ol { padding-left:22px; }
+    .report-detail blockquote { border-left:4px solid var(--primary); padding-left:14px; color:#4b5563; }
+    @media (max-width:768px) {
+      .report-card { grid-template-columns:1fr; }
+      .report-num { width:44px; height:44px; }
+      .report-detail { grid-column:1; }
+    }
     .subscribe-box { background:linear-gradient(135deg,#f0fdf4,#e6f4f1); border:1.5px solid #86efac; border-radius:var(--radius-lg); padding:32px; margin-bottom:48px; }
   </style>
 </head>
@@ -279,6 +290,40 @@
     return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
   }
 
+  function sanitizeBriefingContent(html='') {
+    const source = String(html).trim();
+    if (!source) return '<p>전문 내용이 없습니다.</p>';
+    if (!/<[a-z][\s\S]*>/i.test(source)) {
+      return `<p>${escapeHtml(source).replace(/\n{2,}/g, '</p><p>').replace(/\n/g, '<br>')}</p>`;
+    }
+
+    const template = document.createElement('template');
+    template.innerHTML = source;
+    const allowedTags = new Set(['H2','H3','P','UL','OL','LI','STRONG','B','EM','I','BR','A','BLOCKQUOTE']);
+    template.content.querySelectorAll('*').forEach(node => {
+      if (!allowedTags.has(node.tagName)) {
+        node.replaceWith(document.createTextNode(node.textContent || ''));
+        return;
+      }
+      [...node.attributes].forEach(attr => {
+        const isSafeLink = node.tagName === 'A' && attr.name === 'href' && /^(https?:|mailto:|\/)/.test(attr.value);
+        if (!isSafeLink) node.removeAttribute(attr.name);
+      });
+      if (node.tagName === 'A') {
+        node.setAttribute('target', '_blank');
+        node.setAttribute('rel', 'noopener noreferrer');
+      }
+    });
+    return template.innerHTML || '<p>전문 내용이 없습니다.</p>';
+  }
+
+  function toggleBriefingContent(id, button) {
+    const card = document.getElementById(`briefing-${id}`);
+    if (!card) return;
+    const expanded = card.classList.toggle('expanded');
+    if (button) button.textContent = expanded ? '접기' : '전문 보기';
+  }
+
   function renderBriefingCard(b, index) {
     const badge = CATEGORY_BADGES[b.category] || {};
     const num = String(index + 1);
@@ -287,7 +332,7 @@
     const author = b.author ? `<span>✍️ ${escapeHtml(b.author)}</span>` : '';
     const featured = b.is_featured ? `<span class="tag tag-accent">⭐ 대표</span>` : '';
     return `
-      <div class="report-card fade-in" data-category="${CATEGORY_KEY_MAP[b.category] || ''}">
+      <div class="report-card fade-in" id="briefing-${escapeHtml(b.id)}" data-category="${CATEGORY_KEY_MAP[b.category] || ''}">
         <div class="report-num" style="background:${badge.bg}; color:${badge.color};">${num}</div>
         <div class="report-body">
           <div class="title">${escapeHtml(b.title)}</div>
@@ -300,8 +345,9 @@
           <p style="font-size:.88rem; color:#374151; margin-top:8px; line-height:1.65;">${escapeHtml(b.summary||'')}</p>
         </div>
         <div class="report-action">
-          <a href="post.html?type=briefing&id=${encodeURIComponent(b.id)}" class="btn btn-outline" style="font-size:.82rem; padding:8px 14px;">보기</a>
+          <button type="button" class="btn btn-outline briefing-toggle" data-briefing-id="${escapeHtml(b.id)}" style="font-size:.82rem; padding:8px 14px;">전문 보기</button>
         </div>
+        <div class="report-detail">${sanitizeBriefingContent(b.content)}</div>
       </div>`;
   }
 
@@ -336,6 +382,16 @@
 
     const activeBtn = document.querySelector('.filter-btn.active');
     if (activeBtn) applyFilter(activeBtn.dataset.filter);
+
+    if (location.hash.startsWith('#briefing-')) {
+      const card = document.querySelector(location.hash);
+      const button = card?.querySelector('.report-action button');
+      if (card && !card.classList.contains('expanded')) {
+        card.classList.add('expanded');
+        if (button) button.textContent = '접기';
+        card.scrollIntoView({ block: 'start' });
+      }
+    }
   }
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -344,6 +400,12 @@
       btn.classList.add('active');
       applyFilter(btn.dataset.filter);
     });
+  });
+
+  document.addEventListener('click', (event) => {
+    const button = event.target.closest('.briefing-toggle');
+    if (!button) return;
+    toggleBriefingContent(button.dataset.briefingId, button);
   });
 
   loadBriefings();

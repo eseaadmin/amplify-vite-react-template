@@ -745,7 +745,7 @@ async function renderBriefingList() {
         <td><span class="status-dot status-${x.status}"></span>${x.status||'-'}</td>
         <td class="actions-cell">
           <button class="btn btn-secondary btn-sm" onclick="editBriefing('${x.id}')"><i class="fas fa-edit"></i> 수정</button>
-          <a href="post.html?type=briefing&id=${x.id}" target="_blank" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i> 보기</a>
+          <a href="../briefing.html#briefing-${x.id}" target="_blank" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i> 보기</a>
         </td>
       </tr>`).join('') : `<tr class="empty-row"><td colspan="7">등록된 브리핑이 없습니다</td></tr>`;
   } catch(e) { console.error(e); toast('목록 로드 오류', 'error'); }
