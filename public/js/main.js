@@ -85,16 +85,48 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ── 스크롤 페이드 인 ── */
-  const fadeEls = document.querySelectorAll('.fade-in');
-  const fadeObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        fadeObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  fadeEls.forEach(el => fadeObserver.observe(el));
+  const observedFadeEls = new WeakSet();
+  const showFadeIn = (el) => el.classList.add('visible');
+  let fadeObserver = null;
+
+  function observeFadeIn(el) {
+    if (!el || observedFadeEls.has(el)) return;
+    observedFadeEls.add(el);
+
+    if (!fadeObserver) {
+      showFadeIn(el);
+      return;
+    }
+
+    fadeObserver.observe(el);
+  }
+
+  if ('IntersectionObserver' in window) {
+    fadeObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          showFadeIn(entry.target);
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+  }
+
+  document.querySelectorAll('.fade-in').forEach(observeFadeIn);
+  window.observeFadeIns = (root = document) => {
+    root.querySelectorAll?.('.fade-in').forEach(observeFadeIn);
+    if (root.classList?.contains('fade-in')) observeFadeIn(root);
+  };
+
+  if ('MutationObserver' in window) {
+    new MutationObserver((mutations) => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === Node.ELEMENT_NODE) window.observeFadeIns(node);
+        });
+      });
+    }).observe(document.body, { childList: true, subtree: true });
+  }
 
   /* ── 가입 폼 제출 처리 ── */
   const joinForm = document.getElementById('join-form-el');

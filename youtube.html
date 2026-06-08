@@ -114,7 +114,7 @@
     </div>
 
     <!-- 주요 영상 -->
-    <div class="yt-hero-card fade-in" style="margin-bottom:40px;">
+    <div class="yt-hero-card fade-in" id="yt-hero-card" style="margin-bottom:40px;">
       <div class="yt-main-thumb" onclick="alert('유튜브 채널 연결 예정입니다. 협회 채널을 구독하시면 새 영상을 가장 먼저 받아보실 수 있습니다.')">
         <div class="overlay"></div>
         <div class="play">▶</div>
@@ -155,7 +155,7 @@
     </div>
 
     <!-- 영상 그리드 -->
-    <div class="yt-grid" style="margin-bottom:40px;">
+    <div class="yt-grid" id="yt-grid" style="margin-bottom:40px;">
 
       <!-- 긴급진단 시리즈 -->
       <div class="yt-card2 fade-in">
@@ -270,6 +270,10 @@
 
     </div>
 
+    <div style="text-align:center; margin:-8px 0 40px;">
+      <button class="btn btn-outline btn-lg" id="load-more-videos">더 많은 글 보기</button>
+    </div>
+
     <!-- 채널 성장 계획 -->
     <div style="background:#fff; border-radius:var(--radius-lg); padding:36px; margin-bottom:32px;" class="fade-in">
       <h2 style="font-size:1.3rem; font-weight:800; color:#111; margin-bottom:20px;">📺 채널 운영 계획</h2>
@@ -366,14 +370,183 @@
 </footer>
 
 <script src="/js/main.js"></script>
+<script src="/js/videos.js"></script>
 <script>
-  // 영상 카드 클릭
-  document.querySelectorAll('.yt-card2, .yt-main-thumb').forEach(card => {
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
-      alert('유튜브 채널 연결 예정입니다.\n\n채널을 구독하시면 새 영상 업로드 시 알림을 받으실 수 있습니다.\n\n유튜브 채널: 에너지안보환경협회');
-    });
-  });
+  const PAGE_SIZE = 9;
+  const FILTER_CATEGORY = {
+    '전체': '',
+    '🚨 긴급진단 리뷰': '긴급진단리뷰',
+    '🏛️ 콜로키움': '콜로키움',
+    '🎤 전문가 인터뷰': '전문가인터뷰',
+    '📚 에너지 기초': '에너지기초'
+  };
+  const CATEGORY_TAG = {
+    '긴급진단리뷰': 'tag-red',
+    '콜로키움': 'tag-primary',
+    '전문가인터뷰': 'tag-blue',
+    '정책토론': 'tag-accent',
+    '에너지기초': 'tag-accent'
+  };
+  const CATEGORY_LABEL = {
+    '긴급진단리뷰': '긴급진단 리뷰',
+    '콜로키움': '콜로키움',
+    '전문가인터뷰': '전문가 인터뷰',
+    '정책토론': '정책토론',
+    '에너지기초': '에너지 기초'
+  };
+
+  let videoItems = [];
+  let activeCategory = '';
+  let visibleCount = PAGE_SIZE;
+
+  function escapeHtml(s='') {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  }
+
+  function sortDateValue(item) {
+    const date = item.publish_date || item.created_at || item.createdAt || 0;
+    return new Date(date).getTime() || 0;
+  }
+
+  function formatDate(date) {
+    if (!date) return '-';
+    const d = new Date(date);
+    if (Number.isNaN(d.getTime())) return date;
+    return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  function videoUrl(item) {
+    return item.youtube_id ? `https://youtube.com/watch?v=${encodeURIComponent(item.youtube_id)}` : 'https://youtube.com';
+  }
+
+  function tagClass(category) {
+    return CATEGORY_TAG[category] || 'tag-primary';
+  }
+
+  function categoryLabel(category) {
+    return CATEGORY_LABEL[category] || category || '영상';
+  }
+
+  function filteredVideoItems() {
+    return activeCategory
+      ? videoItems.filter(item => item.category === activeCategory)
+      : videoItems;
+  }
+
+  function updateLoadMoreButton(totalCount) {
+    const btn = document.getElementById('load-more-videos');
+    if (!btn) return;
+    btn.style.display = totalCount > visibleCount ? 'inline-flex' : 'none';
+  }
+
+  function renderHeroVideo(item) {
+    const hero = document.getElementById('yt-hero-card');
+    if (!hero) return;
+
+    if (!item) {
+      hero.innerHTML = `
+        <div class="yt-main-thumb">
+          <div class="overlay"></div>
+          <div class="play">▶</div>
+          <div style="font-size:.9rem; color:rgba(255,255,255,.8); z-index:1;">대표 영상 없음</div>
+        </div>
+        <div>
+          <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+            <span class="tag tag-primary">영상</span>
+          </div>
+          <h2 style="font-size:1.3rem; font-weight:800; color:#111; margin-bottom:12px; line-height:1.4;">대표 영상이 없습니다</h2>
+          <p style="color:#374151; line-height:1.75; font-size:.93rem; margin-bottom:20px;">유튜브 영상 등록/수정 화면에서 대표 영상을 선택하면 여기에 표시됩니다.</p>
+        </div>
+      `;
+      hero.classList.add('visible');
+      return;
+    }
+
+    hero.innerHTML = `
+      <a class="yt-main-thumb" href="${videoUrl(item)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;">
+        <div class="overlay"></div>
+        <div class="play">▶</div>
+        <div style="font-size:.9rem; color:rgba(255,255,255,.8); z-index:1;">${escapeHtml(categoryLabel(item.category))}</div>
+      </a>
+      <div>
+        <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+          <span class="tag ${tagClass(item.category)}">${escapeHtml(categoryLabel(item.category))}</span>
+          <span class="tag tag-accent">대표</span>
+        </div>
+        <h2 style="font-size:1.3rem; font-weight:800; color:#111; margin-bottom:12px; line-height:1.4;">
+          ${escapeHtml(item.title)}
+        </h2>
+        <div style="font-size:.82rem; color:#6b7280; margin-bottom:14px; display:flex; gap:12px; flex-wrap:wrap;">
+          <span>📅 ${escapeHtml(formatDate(item.publish_date || item.created_at || item.createdAt))}</span>
+          ${item.duration ? `<span>⏱️ ${escapeHtml(item.duration)}</span>` : ''}
+          ${item.speaker ? `<span>🎤 ${escapeHtml(item.speaker)}</span>` : ''}
+        </div>
+        <p style="color:#374151; line-height:1.75; font-size:.93rem; margin-bottom:20px;">
+          ${escapeHtml(item.description || '')}
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="${videoUrl(item)}" target="_blank" rel="noopener noreferrer" class="btn btn-accent">▶ 유튜브에서 보기</a>
+          <a href="/briefing.html" class="btn btn-outline">📋 브리핑·리포트 보기</a>
+        </div>
+      </div>
+    `;
+    hero.classList.add('visible');
+    window.observeFadeIns?.(hero);
+  }
+
+  function renderVideoCard(item) {
+    return `
+      <a class="yt-card2 fade-in visible" href="${videoUrl(item)}" target="_blank" rel="noopener noreferrer" style="text-decoration:none; color:inherit;" data-category="${escapeHtml(item.category || '')}">
+        <div class="yt-thumb2" style="background:linear-gradient(135deg,#1a1a2e,#0a6e61);">
+          <div class="play-overlay"><span class="yt-play-btn">▶</span></div>
+          <div style="font-size:2.5rem; color:rgba(255,255,255,.8); text-align:center;">▶<br><span style="font-size:.75rem; font-weight:700; color:#fff;">${escapeHtml(categoryLabel(item.category))}</span></div>
+        </div>
+        <div class="yt-info">
+          <span class="tag ${tagClass(item.category)}" style="font-size:.7rem; margin-bottom:6px; display:inline-block;">${escapeHtml(categoryLabel(item.category))}</span>
+          <h3>${escapeHtml(item.title)}</h3>
+          <div class="meta">
+            <span>${escapeHtml(formatDate(item.publish_date || item.created_at || item.createdAt))}</span>
+            ${item.duration ? `<span>⏱️ ${escapeHtml(item.duration)}</span>` : ''}
+          </div>
+        </div>
+      </a>
+    `;
+  }
+
+  function renderVideoGrid() {
+    const grid = document.getElementById('yt-grid');
+    if (!grid) return;
+
+    const filtered = filteredVideoItems();
+    const visibleItems = filtered.slice(0, visibleCount);
+
+    grid.innerHTML = visibleItems.length
+      ? visibleItems.map(renderVideoCard).join('')
+      : `<div style="grid-column:1 / -1; background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); padding:28px; text-align:center; color:#6b7280;">등록된 영상이 없습니다.</div>`;
+    updateLoadMoreButton(filtered.length);
+    window.observeFadeIns?.(grid);
+  }
+
+  async function loadVideos() {
+    try {
+      const items = await VideosAPI.listVideos();
+      videoItems = items
+        .filter(item => item.status !== '초안')
+        .sort((a, b) => sortDateValue(b) - sortDateValue(a));
+
+      renderVideoGrid();
+
+      const featured = videoItems
+        .filter(item => item.is_featured)
+        .sort((a, b) => sortDateValue(b) - sortDateValue(a))[0];
+      renderHeroVideo(featured);
+    } catch (err) {
+      console.error('영상 로드 실패:', err);
+      const grid = document.getElementById('yt-grid');
+      if (grid) grid.innerHTML = `<div style="grid-column:1 / -1; background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); padding:28px; text-align:center; color:#6b7280;">영상을 불러오지 못했습니다.</div>`;
+      updateLoadMoreButton(0);
+    }
+  }
 
   // 카테고리 탭
   document.querySelectorAll('.blog-filter-btn').forEach(btn => {
@@ -386,8 +559,18 @@
       btn.style.background = 'var(--primary)';
       btn.style.color = '#fff';
       btn.style.borderColor = 'var(--primary)';
+      activeCategory = FILTER_CATEGORY[btn.textContent.trim()] || '';
+      visibleCount = PAGE_SIZE;
+      renderVideoGrid();
     });
   });
+
+  document.getElementById('load-more-videos')?.addEventListener('click', () => {
+    visibleCount += PAGE_SIZE;
+    renderVideoGrid();
+  });
+
+  loadVideos();
 </script>
 </body>
 </html>

@@ -23,3 +23,14 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
+
+## Local Test
+### Start the backend sandbox
+```shell
+npx ampx sandbox
+```
+
+### Start your desktop front-end
+```shell
+npm run dev
+```

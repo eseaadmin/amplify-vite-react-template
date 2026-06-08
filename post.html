@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로딩 중... | 에너지안보환경협회</title>
+  <meta name="description" content="">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+  <style>
+    /* ── 전문 본문 전용 스타일 ── */
+    .post-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+
+    /* 상단 메타 배너 */
+    .post-hero {
+      background: linear-gradient(135deg, #054d44 0%, #0a7a6e 100%);
+      color: #fff;
+      padding: 52px 0 40px;
+      margin-bottom: 0;
+    }
+    .post-hero .container { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+    .post-type-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.18); color: #fff;
+      padding: 4px 14px; border-radius: 20px;
+      font-size: .78rem; font-weight: 700;
+      margin-bottom: 16px; letter-spacing: .04em;
+    }
+    .post-hero h1 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 900; line-height: 1.45;
+      margin-bottom: 18px; word-break: keep-all;
+    }
+    .post-hero-meta {
+      display: flex; gap: 20px; flex-wrap: wrap;
+      font-size: .85rem; opacity: .88;
+    }
+    .post-hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* 태그 */
+    .tag-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; }
+    .tag { background: rgba(255,255,255,.15); color: #fff; padding: 3px 12px; border-radius: 20px; font-size: .75rem; font-weight: 600; }
+
+    /* 본문 영역 */
+    .post-body-wrap {
+      background: #fff;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.08);
+      overflow: hidden;
+    }
+
+    /* 요약 박스 */
+    .summary-box {
+      background: #f0fdf9;
+      border-left: 4px solid #054d44;
+      padding: 20px 24px;
+      margin: 0;
+      font-size: .95rem; color: #1f4e3a; line-height: 1.8;
+      font-weight: 500;
+    }
+    .summary-box-title {
+      font-size: .75rem; font-weight: 800; letter-spacing: .08em;
+      color: #054d44; margin-bottom: 6px; text-transform: uppercase;
+    }
+
+    /* 전문 본문 */
+    .post-content {
+      padding: 36px 36px 48px;
+      font-size: 1rem; line-height: 1.95; color: #1f2937;
+    }
+    .post-content h2 {
+      font-size: 1.2rem; font-weight: 800;
+      color: #054d44; margin: 36px 0 12px;
+      padding-bottom: 8px; border-bottom: 2px solid #e6f4f1;
+    }
+    .post-content h3 {
+      font-size: 1.05rem; font-weight: 700;
+      color: #111827; margin: 24px 0 8px;
+    }
+    .post-content p { margin-bottom: 14px; word-break: keep-all; }
+    .post-content ul, .post-content ol {
+      padding-left: 1.6em; margin-bottom: 14px;
+    }
+    .post-content li { margin-bottom: 6px; line-height: 1.8; }
+    .post-content strong { font-weight: 700; color: #111; }
+    .post-content em { font-style: italic; color: #374151; }
+    .post-content blockquote {
+      border-left: 4px solid #054d44; margin: 20px 0;
+      padding: 12px 20px; background: #f0fdf9;
+      color: #1f4e3a; font-style: italic; border-radius: 0 8px 8px 0;
+    }
+    .post-content table {
+      width: 100%; border-collapse: collapse;
+      margin: 20px 0; font-size: .92rem;
+    }
+    .post-content table th {
+      background: #054d44; color: #fff;
+      padding: 9px 14px; text-align: left;
+    }
+    .post-content table td {
+      border: 1px solid #e5e7eb; padding: 8px 14px;
+    }
+    .post-content table tr:nth-child(even) td { background: #f9fafb; }
+
+    /* 하단 공유·탐색 */
+    .post-footer {
+      padding: 24px 36px;
+      border-top: 1px solid #f3f4f6;
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 14px;
+    }
+    .post-share { display: flex; gap: 10px; align-items: center; }
+    .post-share span { font-size: .85rem; font-weight: 600; color: #6b7280; }
+    .share-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid #e5e7eb; background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #6b7280; font-size: .9rem;
+      transition: all .15s; text-decoration: none;
+    }
+    .share-btn:hover { background: #054d44; color: #fff; border-color: #054d44; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      color: #054d44; font-size: .88rem; font-weight: 700;
+      text-decoration: none; transition: gap .15s;
+    }
+    .back-btn:hover { gap: 10px; }
+
+    /* 관련 글 */
+    .related-section {
+      padding: 36px 0 0;
+    }
+    .related-section h3 {
+      font-size: 1rem; font-weight: 800; margin-bottom: 16px;
+      color: #111827;
+    }
+    .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .related-card {
+      background: #fff; border: 1px solid #e5e7eb;
+      border-radius: 10px; padding: 18px;
+      text-decoration: none; color: inherit;
+      transition: all .2s; display: block;
+    }
+    .related-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1); transform: translateY(-2px); }
+    .related-card .rc-cat { font-size: .72rem; font-weight: 700; color: #054d44; margin-bottom: 6px; }
+    .related-card .rc-title { font-size: .88rem; font-weight: 700; line-height: 1.5; color: #111827; margin-bottom: 6px; }
+    .related-card .rc-date { font-size: .75rem; color: #9ca3af; }
+
+    /* 스켈레톤 로딩 */
+    .skeleton { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%); background-size: 200% 100%; animation: skel 1.4s infinite; border-radius: 6px; }
+    @keyframes skel { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+    .skel-line { height: 16px; margin-bottom: 10px; }
+    .skel-title { height: 32px; width: 80%; margin-bottom: 14px; }
+    .skel-para { height: 14px; margin-bottom: 8px; }
+
+    /* 에러 상태 */
+    .error-box {
+      text-align: center; padding: 80px 20px;
+      color: #6b7280;
+    }
+    .error-box i { font-size: 3rem; margin-bottom: 16px; opacity: .4; }
+    .error-box h2 { font-size: 1.2rem; margin-bottom: 8px; color: #374151; }
+
+    /* 인쇄 */
+    @media print {
+      .action-bar, nav#site-nav, .post-footer, .related-section,
+      .public-badge-bar, footer, .back-btn { display: none !important; }
+      .post-hero { background: #054d44 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .post-content { padding: 24px 0; }
+      @page { margin: 20mm; }
+    }
+    @media (max-width: 640px) {
+      .post-content { padding: 20px 18px 36px; }
+      .post-footer { flex-direction: column; align-items: flex-start; }
+      .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 알림 바 -->
+<div class="public-badge-bar" id="top-badge">
+  📄 에너지안보환경협회 공개 자료 — 무료로 열람하실 수 있습니다
+  <a href="briefing.html">전체 목록 보기 →</a>
+</div>
+
+<!-- 네비게이션 -->
+<nav id="site-nav">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="images/esea-logo-official.png" alt="사단법인 에너지안보환경협회" class="nav-logo-img">
+    </a>
+    <div class="nav-menu">
+      <a href="about.html">협회소개</a>
+      <a href="briefing.html" id="nav-briefing">브리핑·리포트</a>
+      <a href="blog.html" id="nav-blog">블로그·인사이트</a>
+      <a href="youtube.html">유튜브·영상</a>
+      <a href="transparency.html">공익·투명성</a>
+      <a href="contact.html">문의하기</a>
+    </div>
+    <div class="nav-cta">
+      <a href="partnership.html" class="btn btn-outline">기관협력</a>
+      <a href="membership.html" class="btn btn-primary">개인회원 가입</a>
+    </div>
+    <button class="nav-hamburger">☰</button>
+  </div>
+  <div class="nav-mobile">
+    <a href="about.html">협회소개</a>
+    <a href="briefing.html">브리핑·리포트</a>
+    <a href="blog.html">블로그·인사이트</a>
+    <a href="youtube.html">유튜브·영상</a>
+    <a href="transparency.html">공익·투명성</a>
+    <a href="membership.html">개인회원 가입</a>
+    <a href="partnership.html">기관협력 제안</a>
+    <a href="contact.html">문의하기</a>
+  </div>
+</nav>
+
+<!-- ══ 히어로 (동적 주입) ══ -->
+<div class="post-hero" id="post-hero">
+  <div class="container">
+    <!-- 스켈레톤 -->
+    <div id="hero-skeleton">
+      <div class="skeleton skel-line" style="width:100px; height:24px; margin-bottom:16px;"></div>
+      <div class="skeleton skel-title" style="height:36px; margin-bottom:12px;"></div>
+      <div class="skeleton skel-title" style="height:36px; width:60%; margin-bottom:20px;"></div>
+      <div class="skeleton skel-line" style="width:260px;"></div>
+    </div>
+    <div id="hero-content" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- ══ 본문 ══ -->
+<section style="background: #f8fafc; padding: 0 0 60px;">
+  <div class="post-wrap">
+
+    <div class="post-body-wrap" id="post-body-wrap">
+
+      <!-- 요약 박스 -->
+      <div class="summary-box" id="summary-box" style="display:none;">
+        <div class="summary-box-title">📌 요약</div>
+        <div id="summary-text"></div>
+      </div>
+
+      <!-- 전문 본문 -->
+      <div class="post-content" id="post-content">
+        <!-- 스켈레톤 -->
+        <div id="content-skeleton">
+          <div class="skeleton skel-para" style="width:100%;"></div>
+          <div class="skeleton skel-para" style="width:95%;"></div>
+          <div class="skeleton skel-para" style="width:88%;"></div>
+          <div class="skeleton skel-para" style="width:92%;"></div>
+          <br>
+          <div class="skeleton skel-line" style="width:40%; height:22px; margin-bottom:14px;"></div>
+          <div class="skeleton skel-para" style="width:100%;"></div>
+          <div class="skeleton skel-para" style="width:97%;"></div>
+          <div class="skeleton skel-para" style="width:85%;"></div>
+        </div>
+      </div>
+
+      <!-- 하단 공유·탐색 -->
+      <div class="post-footer" id="post-footer" style="display:none;">
+        <a href="#" class="back-btn" id="back-btn">
+          <i class="fas fa-arrow-left"></i> 목록으로 돌아가기
+        </a>
+        <div class="post-share">
+          <span>공유</span>
+          <a href="#" class="share-btn" id="share-copy" title="링크 복사"><i class="fas fa-link"></i></a>
+          <a href="#" class="share-btn" id="share-print" title="인쇄/PDF 저장"><i class="fas fa-print"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 관련 글 -->
+    <div class="related-section" id="related-section" style="display:none;">
+      <h3 id="related-title">관련 브리핑</h3>
+      <div class="related-grid" id="related-grid"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 에러 -->
+<div class="error-box" id="error-box" style="display:none;">
+  <i class="fas fa-exclamation-circle"></i>
+  <h2>콘텐츠를 불러올 수 없습니다</h2>
+  <p>요청하신 게시물이 존재하지 않거나 삭제되었습니다.</p>
+  <a href="briefing.html" class="btn btn-primary" style="margin-top:20px; display:inline-flex; align-items:center; gap:6px;">
+    <i class="fas fa-arrow-left"></i> 목록으로
+  </a>
+</div>
+
+<script src="/js/briefings.js"></script>
+<script src="/js/blogs.js"></script>
+<script>
+/* ── URL 파라미터 파싱 ── */
+const params = new URLSearchParams(location.search);
+const TYPE = params.get('type') || 'briefing'; // briefing | blog
+const ID   = params.get('id');
+
+const LIST_URL = TYPE === 'blog' ? 'blog.html' : 'briefing.html';
+const TYPE_LABEL = TYPE === 'blog' ? '블로그·인사이트' : '브리핑·리포트';
+
+/* ── 네비 active ── */
+if (TYPE === 'blog') {
+  document.getElementById('nav-blog').classList.add('active');
+  document.getElementById('top-badge').innerHTML = '✍️ 에너지안보환경협회 블로그 — 전문 인사이트를 공개합니다 <a href="blog.html">전체 목록 →</a>';
+} else {
+  document.getElementById('nav-briefing').classList.add('active');
+}
+
+/* ── 카테고리 배지 색상 ── */
+const CAT_COLOR = {
+  '긴급진단':    { bg:'#fef3c7', fg:'#92400e' },
+  '콜로키움':    { bg:'#dbeafe', fg:'#1e40af' },
+  '정책브리핑':  { bg:'#d1fae5', fg:'#065f46' },
+  '리포트':      { bg:'#ede9fe', fg:'#5b21b6' },
+  '에너지안보':  { bg:'#fef3c7', fg:'#92400e' },
+  '기후변화':    { bg:'#d1fae5', fg:'#065f46' },
+  '공급망':      { bg:'#dbeafe', fg:'#1e40af' },
+  '저탄소전환':  { bg:'#ede9fe', fg:'#5b21b6' },
+  '정책분석':    { bg:'#fce7f3', fg:'#9d174d' },
+};
+
+function catBadge(cat) {
+  const c = CAT_COLOR[cat] || { bg:'#f3f4f6', fg:'#374151' };
+  return `<span style="background:${c.bg};color:${c.fg};padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:700;">${cat}</span>`;
+}
+
+/* ── 날짜 포맷 ── */
+function fmtDate(d) {
+  if (!d) return '';
+  const dt = new Date(d);
+  return isNaN(dt) ? d : `${dt.getFullYear()}. ${dt.getMonth()+1}. ${dt.getDate()}.`;
+}
+
+/* ── 메인 로드 ── */
+async function loadPost() {
+  if (!ID) { showError(); return; }
+  try {
+    const post = TYPE === 'briefing'
+      ? await BriefingsAPI.getBriefing(ID)
+      : await BlogsAPI.getBlog(ID);
+    if (!post || post.status === '초안') { showError(); return; }
+    renderPost(post);
+    loadRelated(post);
+  } catch(e) { showError(); }
+}
+
+function renderPost(post) {
+  /* ── 페이지 타이틀·메타 ── */
+  document.title = `${post.title} | 에너지안보환경협회`;
+  document.querySelector('meta[name="description"]').content = post.summary || '';
+
+  /* ── 히어로 ── */
+  const tagsHtml = post.tags
+    ? post.tags.split(',').map(t => `<span class="tag">${t.trim()}</span>`).join('')
+    : '';
+  const authorIcon = TYPE === 'blog' ? 'fa-user-edit' : 'fa-users';
+  const emoji = post.emoji ? `<span style="font-size:1.3rem; margin-right:8px;">${post.emoji}</span>` : '';
+
+  document.getElementById('hero-content').innerHTML = `
+    <nav class="breadcrumb" style="margin-bottom:14px; opacity:.8;">
+      <a href="index.html" style="color:rgba(255,255,255,.8); text-decoration:none;">홈</a>
+      <span style="margin:0 8px; opacity:.6;">/</span>
+      <a href="${LIST_URL}" style="color:rgba(255,255,255,.8); text-decoration:none;">${TYPE_LABEL}</a>
+      <span style="margin:0 8px; opacity:.6;">/</span>
+      <span style="opacity:.7;">본문</span>
+    </nav>
+    <div class="post-type-badge">
+      <i class="fas fa-${TYPE==='blog'?'pen-nib':'file-alt'}"></i>
+      ${catBadge(post.category)}
+    </div>
+    <h1>${emoji}${post.title}</h1>
+    <div class="post-hero-meta">
+      ${post.author ? `<span><i class="fas fa-${authorIcon}"></i>${post.author}</span>` : ''}
+      <span><i class="fas fa-calendar-alt"></i>${fmtDate(post.publish_date)}</span>
+      ${TYPE==='blog' && post.emoji ? `<span>${post.emoji} 블로그</span>` : ''}
+    </div>
+    ${tagsHtml ? `<div class="tag-list">${tagsHtml}</div>` : ''}
+  `;
+
+  /* 히어로 스켈레톤 → 실제 */
+  document.getElementById('hero-skeleton').style.display = 'none';
+  document.getElementById('hero-content').style.display = 'block';
+
+  /* ── 요약 박스 ── */
+  if (post.summary) {
+    document.getElementById('summary-text').textContent = post.summary;
+    document.getElementById('summary-box').style.display = 'block';
+  }
+
+  /* ── 전문 본문 ── */
+  document.getElementById('content-skeleton').remove();
+  const contentEl = document.getElementById('post-content');
+  if (post.content) {
+    contentEl.innerHTML = post.content;
+  } else {
+    contentEl.innerHTML = '<p style="color:#9ca3af; text-align:center; padding:40px 0;">본문 내용이 없습니다.</p>';
+  }
+
+  /* ── 하단 ── */
+  document.getElementById('back-btn').href = LIST_URL;
+  document.getElementById('back-btn').innerHTML = `<i class="fas fa-arrow-left"></i> ${TYPE_LABEL} 목록`;
+  document.getElementById('post-footer').style.display = 'flex';
+
+  /* 링크 복사 */
+  document.getElementById('share-copy').addEventListener('click', e => {
+    e.preventDefault();
+    navigator.clipboard.writeText(location.href).then(() => showToast('링크가 복사되었습니다'));
+  });
+  /* 인쇄 */
+  document.getElementById('share-print').addEventListener('click', e => {
+    e.preventDefault();
+    window.print();
+  });
+}
+
+/* ── 관련 글 로드 ── */
+async function loadRelated(current) {
+  try {
+    const items = TYPE === 'briefing'
+      ? await BriefingsAPI.listBriefings()
+      : await BlogsAPI.listBlogs();
+    const related = items
+      .filter(x => x.id !== current.id && x.status === '발행')
+      .sort((a, b) => {
+        // 같은 카테고리 우선
+        const sameCat = (b.category === current.category ? 1 : 0) - (a.category === current.category ? 1 : 0);
+        if (sameCat !== 0) return sameCat;
+        return (b.created_at||0) - (a.created_at||0);
+      })
+      .slice(0, 3);
+
+    if (!related.length) return;
+
+    document.getElementById('related-title').textContent = TYPE === 'blog' ? '관련 블로그 글' : '관련 브리핑';
+    document.getElementById('related-grid').innerHTML = related.map(x => `
+      <a href="post.html?type=${TYPE}&id=${x.id}" class="related-card">
+        <div class="rc-cat">${catBadge(x.category)}</div>
+        <div class="rc-title">${x.emoji ? x.emoji + ' ' : ''}${x.title}</div>
+        <div class="rc-date"><i class="fas fa-calendar-alt" style="margin-right:4px;"></i>${fmtDate(x.publish_date)}</div>
+      </a>
+    `).join('');
+    document.getElementById('related-section').style.display = 'block';
+  } catch(e) { /* 관련 글 오류 무시 */ }
+}
+
+/* ── 에러 ── */
+function showError() {
+  document.getElementById('post-hero').style.display = 'none';
+  document.querySelector('section').style.display = 'none';
+  document.getElementById('error-box').style.display = 'block';
+}
+
+/* ── 토스트 ── */
+function showToast(msg) {
+  let t = document.getElementById('mini-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'mini-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#054d44;color:#fff;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:opacity .25s;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(() => t.style.opacity = '0', 2500);
+}
+
+/* ── 실행 ── */
+loadPost();
+
+/* ── 모바일 네비 ── */
+const ham = document.querySelector('.nav-hamburger');
+const mob = document.querySelector('.nav-mobile');
+if (ham && mob) ham.addEventListener('click', () => mob.classList.toggle('open'));
+</script>
+</body>
+</html>

@@ -90,7 +90,7 @@
             <!-- 메인 콘텐츠 -->
             <div>
                 <!-- 주요 포스트 -->
-                <div class="featured-post fade-in">
+                <div class="featured-post fade-in" id="feature-post">
                     <div class="thumb">⚡</div>
                     <div>
                         <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
@@ -125,7 +125,7 @@
                 </div>
 
                 <!-- 포스트 그리드 -->
-                <div class="post-grid">
+                <div class="post-grid" id="post-grid">
 
                     <article class="post-card fade-in">
                         <div class="post-thumb" style="background:linear-gradient(135deg,#e6f4f1,#d1fae5);">🌱</div>
@@ -281,14 +281,14 @@
 
             <!-- 사이드바 -->
             <aside class="sidebar">
-                <!-- 검색 -->
+                <!-- 검색
                 <div class="sidebar-card fade-in">
                     <h3>🔍 검색</h3>
                     <div style="display:flex; gap:8px;">
                         <input type="text" placeholder="검색어 입력" class="form-control" style="flex:1;">
                         <button class="btn btn-primary" style="padding:12px;">→</button>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- 카테고리 -->
                 <div class="sidebar-card fade-in">
@@ -426,19 +426,183 @@
 
 <script src="/js/main.js"></script>
 <script src="/js/newsletter.js"></script>
+<script src="/js/blogs.js"></script>
 <script>
+    const CATEGORY_CLASS = {
+        '에너지안보': 'tag-primary',
+        '기후변화': 'tag-primary',
+        '공급망': 'tag-blue',
+        '저탄소전환': 'tag-accent',
+        '정책분석': 'tag-accent',
+        '저탄소·기후': 'tag-accent',
+        '정책·제도': 'tag-accent',
+        '협회 활동': 'tag-primary'
+    };
+
+    const FILTER_CATEGORY = {
+        '전체': '',
+        '에너지안보': '에너지안보',
+        '저탄소·기후': '저탄소전환',
+        '공급망': '공급망',
+        '정책·제도': '정책분석',
+        '협회 활동': '협회 활동'
+    };
+
+    const PAGE_SIZE = 9;
+    let blogItems = [];
+    let activeCategory = '';
+    let visibleCount = PAGE_SIZE;
+
+    function escapeHtml(s='') {
+        return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+    }
+
+    function sortDateValue(item) {
+        const date = item.publish_date || item.created_at || item.createdAt || 0;
+        return new Date(date).getTime() || 0;
+    }
+
+    function formatDate(date) {
+        if (!date) return '-';
+        const d = new Date(date);
+        if (Number.isNaN(d.getTime())) return date;
+        return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function tagClass(category) {
+        return CATEGORY_CLASS[category] || 'tag-primary';
+    }
+
+    function postUrl(item) {
+        return `post.html?type=blog&id=${encodeURIComponent(item.id)}`;
+    }
+
+    function renderFeaturedPost(item) {
+        const el = document.getElementById('feature-post');
+        if (!el) return;
+
+        if (!item) {
+            el.innerHTML = `
+                <div class="thumb">✍️</div>
+                <div>
+                    <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                        <span class="tag tag-primary">블로그</span>
+                    </div>
+                    <h2 style="font-size:1.4rem; font-weight:800; color:#111; margin-bottom:12px; line-height:1.4;">대표 블로그 글이 없습니다</h2>
+                    <p style="color:#374151; line-height:1.75; font-size:.95rem; margin-bottom:20px;">블로그 등록/수정 화면에서 대표 게시물을 선택하면 여기에 표시됩니다.</p>
+                </div>
+            `;
+            el.classList.add('visible');
+            return;
+        }
+
+        el.innerHTML = `
+            <div class="thumb">${escapeHtml(item.emoji || '✍️')}</div>
+            <div>
+                <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+                    <span class="tag ${tagClass(item.category)}">${escapeHtml(item.category || '블로그')}</span>
+                    <span class="tag tag-accent">대표</span>
+                </div>
+                <h2 style="font-size:1.4rem; font-weight:800; color:#111; margin-bottom:12px; line-height:1.4;">
+                    ${escapeHtml(item.title)}
+                </h2>
+                <div style="font-size:.82rem; color:#6b7280; margin-bottom:14px; display:flex; gap:12px; flex-wrap:wrap;">
+                    <span>📅 ${escapeHtml(formatDate(item.publish_date || item.created_at || item.createdAt))}</span>
+                    ${item.author ? `<span>✍️ ${escapeHtml(item.author)}</span>` : ''}
+                </div>
+                <p style="color:#374151; line-height:1.75; font-size:.95rem; margin-bottom:20px;">
+                    ${escapeHtml(item.summary || '')}
+                </p>
+                <a href="${postUrl(item)}" class="btn btn-primary">전체 글 읽기 →</a>
+            </div>
+        `;
+        el.classList.add('visible');
+        window.observeFadeIns?.(el);
+    }
+
+    function renderPostCard(item) {
+        return `
+            <article class="post-card fade-in visible" data-category="${escapeHtml(item.category || '')}">
+                <div class="post-thumb" style="background:linear-gradient(135deg,#e6f4f1,#d1fae5);">${escapeHtml(item.emoji || '✍️')}</div>
+                <div class="post-body">
+                    <div class="post-meta">
+                        <span class="tag ${tagClass(item.category)}" style="font-size:.7rem;">${escapeHtml(item.category || '블로그')}</span>
+                        <span>${escapeHtml(formatDate(item.publish_date || item.created_at || item.createdAt))}</span>
+                    </div>
+                    <h3 class="post-title">${escapeHtml(item.title)}</h3>
+                    <p class="post-excerpt">${escapeHtml(item.summary || '')}</p>
+                </div>
+                <div class="post-footer">
+                    <span style="font-size:.78rem; color:#6b7280;">${item.author ? `✍️ ${escapeHtml(item.author)}` : ''}</span>
+                    <a href="${postUrl(item)}" style="color:var(--primary); font-size:.82rem; font-weight:700;">읽기 →</a>
+                </div>
+            </article>
+        `;
+    }
+
+    function filteredBlogItems() {
+        return activeCategory
+            ? blogItems.filter(item => item.category === activeCategory)
+            : blogItems;
+    }
+
+    function updateLoadMoreButton(totalCount) {
+        const btn = document.getElementById('load-more');
+        if (!btn) return;
+        btn.style.display = totalCount > visibleCount ? 'inline-flex' : 'none';
+    }
+
+    function renderPostGrid() {
+        const grid = document.getElementById('post-grid');
+        if (!grid) return;
+
+        const filtered = filteredBlogItems();
+        const visibleItems = filtered.slice(0, visibleCount);
+
+        grid.innerHTML = visibleItems.length
+            ? visibleItems.map(renderPostCard).join('')
+            : `<div style="grid-column:1 / -1; background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); padding:28px; text-align:center; color:#6b7280;">등록된 블로그 글이 없습니다.</div>`;
+        updateLoadMoreButton(filtered.length);
+        window.observeFadeIns?.(grid);
+    }
+
+    async function loadBlogs() {
+        try {
+            const items = await BlogsAPI.listBlogs();
+            blogItems = items
+                .filter(item => item.status !== '초안')
+                .sort((a, b) => sortDateValue(b) - sortDateValue(a));
+
+            renderPostGrid();
+
+            const featured = blogItems
+                .filter(item => item.is_featured)
+                .sort((a, b) => sortDateValue(b) - sortDateValue(a))[0];
+            renderFeaturedPost(featured);
+        } catch (err) {
+            console.error('블로그 로드 실패:', err);
+            document.getElementById('post-grid').innerHTML = `<div style="grid-column:1 / -1; background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); padding:28px; text-align:center; color:#6b7280;">블로그 글을 불러오지 못했습니다.</div>`;
+        }
+    }
+
     // 블로그 필터
     document.querySelectorAll('.blog-filter-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.blog-filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
+            activeCategory = FILTER_CATEGORY[btn.textContent.trim()] || '';
+            visibleCount = PAGE_SIZE;
+            renderPostGrid();
         });
     });
 
     // 더보기
     document.getElementById('load-more')?.addEventListener('click', () => {
-        alert('더 많은 글이 준비 중입니다. 브리핑을 구독하시면 새 글 발행 시 알림을 드립니다.');
+        visibleCount += PAGE_SIZE;
+        renderPostGrid();
     });
+
+    loadBlogs();
 </script>
 </body>
 </html>

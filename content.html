@@ -644,6 +644,8 @@
 <div id="toast"></div>
 
 <script src="/js/briefings.js"></script>
+<script src="/js/blogs.js"></script>
+<script src="/js/videos.js"></script>
 <script>
 /* ══════════════════════════════════════
    유틸
@@ -696,14 +698,32 @@ document.querySelectorAll('[data-panel]').forEach(a => {
 /* ══ 대시보드 ══ */
 async function loadDashboard() {
   let briefings = [];
+  let blogs = [];
+  let videos = [];
   try {
     briefings = await BriefingsAPI.listBriefings();
   } catch(e) { console.error('Briefings load failed', e); }
+  try {
+    blogs = await BlogsAPI.listBlogs();
+  } catch(e) { console.error('Blogs load failed', e); }
+  if (window.VideosAPI) {
+    try {
+      videos = await VideosAPI.listVideos();
+    } catch(e) {
+      videos = [];
+    }
+  }
 
   document.getElementById('stat-briefing').textContent = briefings.length;
   document.getElementById('stat-briefing-pub').textContent = `발행 ${briefings.filter(x=>x.status==='발행').length}건`;
+  document.getElementById('stat-blog').textContent = blogs.length;
+  document.getElementById('stat-blog-pub').textContent = `발행 ${blogs.filter(x=>x.status==='발행').length}건`;
+  document.getElementById('stat-yt').textContent = videos.length;
+  document.getElementById('stat-yt-pub').textContent = `발행 ${videos.filter(x=>x.status==='발행').length}건`;
 
   const all = briefings.map(x => ({...x, _type:'브리핑'}))
+    .concat(blogs.map(x => ({...x, _type:'블로그'})))
+    .concat(videos.map(x => ({...x, _type:'영상'})))
     .sort((a,b) => new Date(b.created_at||b.createdAt||0) - new Date(a.created_at||a.createdAt||0))
     .slice(0, 8);
 
@@ -745,7 +765,7 @@ async function renderBriefingList() {
         <td><span class="status-dot status-${x.status}"></span>${x.status||'-'}</td>
         <td class="actions-cell">
           <button class="btn btn-secondary btn-sm" onclick="editBriefing('${x.id}')"><i class="fas fa-edit"></i> 수정</button>
-          <a href="briefing.html#briefing-${x.id}" target="_blank" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i> 보기</a>
+          <a href="post.html?type=briefing&id=${x.id}" target="_blank" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i> 보기</a>
         </td>
       </tr>`).join('') : `<tr class="empty-row"><td colspan="7">등록된 브리핑이 없습니다</td></tr>`;
   } catch(e) { console.error(e); toast('목록 로드 오류', 'error'); }
@@ -833,12 +853,11 @@ async function renderBlogList() {
   const cat = document.getElementById('bl-filter').value;
   const status = document.getElementById('bl-status').value;
   try {
-    const res = await API('tables/blog_posts?limit=100');
-    let data = res.data;
+    let data = await BlogsAPI.listBlogs();
     if (search) data = data.filter(x => x.title?.toLowerCase().includes(search));
     if (cat) data = data.filter(x => x.category === cat);
     if (status) data = data.filter(x => x.status === status);
-    data.sort((a,b) => (b.created_at||0) - (a.created_at||0));
+    data.sort((a,b) => new Date(b.created_at||b.createdAt||0) - new Date(a.created_at||a.createdAt||0));
 
     const tbody = document.getElementById('blog-tbody');
     tbody.innerHTML = data.length ? data.map((x,i) => `
@@ -857,12 +876,12 @@ async function renderBlogList() {
           <a href="post.html?type=blog&id=${x.id}" target="_blank" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i> 보기</a>
         </td>
       </tr>`).join('') : `<tr class="empty-row"><td colspan="7">등록된 블로그 글이 없습니다</td></tr>`;
-  } catch(e) { toast('목록 로드 오류', 'error'); }
+  } catch(e) { console.error(e); toast('목록 로드 오류', 'error'); }
 }
 
 async function editBlog(id) {
   try {
-    const x = await API(`tables/blog_posts/${id}`);
+    const x = await BlogsAPI.getBlog(id);
     document.getElementById('bl-id').value = x.id;
     document.getElementById('bl-title').value = x.title||'';
     document.getElementById('bl-category').value = x.category||'';
@@ -879,7 +898,7 @@ async function editBlog(id) {
     document.getElementById('bl-form-title').textContent = '블로그 수정';
     document.getElementById('bl-delete-btn').style.display = 'inline-flex';
     showPanel('blog-form');
-  } catch(e) { toast('데이터 로드 오류', 'error'); }
+  } catch(e) { console.error(e); toast('데이터 로드 오류', 'error'); }
 }
 
 async function saveBlog(e) {
@@ -898,12 +917,17 @@ async function saveBlog(e) {
     is_featured: document.getElementById('bl-featured').checked
   };
   try {
-    if (id) { await API(`tables/blog_posts/${id}`, {method:'PUT', body:JSON.stringify(data)}); toast('블로그 글이 수정되었습니다 ✓'); }
-    else    { await API('tables/blog_posts', {method:'POST', body:JSON.stringify(data)}); toast('블로그 글이 등록되었습니다 ✓'); }
+    if (id) {
+      await BlogsAPI.updateBlog({ id, ...data });
+      toast('블로그 글이 수정되었습니다 ✓');
+    } else {
+      await BlogsAPI.createBlog({ ...data, created_at: new Date().toISOString() });
+      toast('블로그 글이 등록되었습니다 ✓');
+    }
     resetForm('blog');
     showPanel('blog-list');
     renderBlogList();
-  } catch(e) { toast('저장 오류', 'error'); }
+  } catch(e) { console.error(e); toast('저장 오류', 'error'); }
 }
 
 /* ══════════════════════════════════════
@@ -913,11 +937,10 @@ async function renderYoutubeList() {
   const search = document.getElementById('yt-search').value.toLowerCase();
   const cat = document.getElementById('yt-filter').value;
   try {
-    const res = await API('tables/youtube_videos?limit=100');
-    let data = res.data;
+    let data = await VideosAPI.listVideos();
     if (search) data = data.filter(x => x.title?.toLowerCase().includes(search));
     if (cat) data = data.filter(x => x.category === cat);
-    data.sort((a,b) => (b.created_at||0) - (a.created_at||0));
+    data.sort((a,b) => new Date(b.created_at||b.createdAt||0) - new Date(a.created_at||a.createdAt||0));
 
     const tbody = document.getElementById('youtube-tbody');
     tbody.innerHTML = data.length ? data.map((x,i) => `
@@ -937,12 +960,12 @@ async function renderYoutubeList() {
           ${x.youtube_id ? `<a href="https://youtube.com/watch?v=${x.youtube_id}" target="_blank" class="btn btn-danger btn-sm"><i class="fab fa-youtube"></i> 보기</a>` : ''}
         </td>
       </tr>`).join('') : `<tr class="empty-row"><td colspan="8">등록된 영상이 없습니다</td></tr>`;
-  } catch(e) { toast('목록 로드 오류', 'error'); }
+  } catch(e) { console.error(e); toast('목록 로드 오류', 'error'); }
 }
 
 async function editYoutube(id) {
   try {
-    const x = await API(`tables/youtube_videos/${id}`);
+    const x = await VideosAPI.getVideo(id);
     document.getElementById('yt-id').value = x.id;
     document.getElementById('yt-title').value = x.title||'';
     document.getElementById('yt-category').value = x.category||'';
@@ -957,7 +980,7 @@ async function editYoutube(id) {
     document.getElementById('yt-form-title').textContent = '유튜브 영상 수정';
     document.getElementById('yt-delete-btn').style.display = 'inline-flex';
     showPanel('youtube-form');
-  } catch(e) { toast('데이터 로드 오류', 'error'); }
+  } catch(e) { console.error(e); toast('데이터 로드 오류', 'error'); }
 }
 
 async function saveYoutube(e) {
@@ -975,12 +998,17 @@ async function saveYoutube(e) {
     is_featured: document.getElementById('yt-featured').checked
   };
   try {
-    if (id) { await API(`tables/youtube_videos/${id}`, {method:'PUT', body:JSON.stringify(data)}); toast('영상 정보가 수정되었습니다 ✓'); }
-    else    { await API('tables/youtube_videos', {method:'POST', body:JSON.stringify(data)}); toast('영상이 등록되었습니다 ✓'); }
+    if (id) {
+      await VideosAPI.updateVideo({ id, ...data });
+      toast('영상 정보가 수정되었습니다 ✓');
+    } else {
+      await VideosAPI.createVideo({ ...data, created_at: new Date().toISOString() });
+      toast('영상이 등록되었습니다 ✓');
+    }
     resetForm('youtube');
     showPanel('youtube-list');
     renderYoutubeList();
-  } catch(e) { toast('저장 오류', 'error'); }
+  } catch(e) { console.error(e); toast('저장 오류', 'error'); }
 }
 
 function previewYoutube() {
@@ -1004,13 +1032,16 @@ function closeModal() {
   document.getElementById('delete-modal').classList.remove('open');
 }
 document.getElementById('confirm-delete-btn').addEventListener('click', async () => {
-  const tableMap = { briefing: 'briefings', blog: 'blog_posts', youtube: 'youtube_videos' };
   const listMap  = { briefing: 'briefing-list', blog: 'blog-list', youtube: 'youtube-list' };
   try {
     if (_deleteType === 'briefing') {
       await BriefingsAPI.deleteBriefing(_deleteId);
+    } else if (_deleteType === 'blog') {
+      await BlogsAPI.deleteBlog(_deleteId);
+    } else if (_deleteType === 'youtube') {
+      await VideosAPI.deleteVideo(_deleteId);
     } else {
-      await API(`tables/${tableMap[_deleteType]}/${_deleteId}`, { method: 'DELETE' });
+      throw new Error(`Unknown delete type: ${_deleteType}`);
     }
     toast('삭제되었습니다');
     closeModal();

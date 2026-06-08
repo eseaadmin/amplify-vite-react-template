@@ -37,34 +37,9 @@ const syncAmplifyOutputs = () => ({
   },
 })
 
-const adminRedirect = () => ({
-  name: 'admin-redirect',
-  configureServer(server: { middlewares: { use: (path: string, cb: (_req: unknown, res: { statusCode: number; setHeader: (name: string, value: string) => void; end: () => void }) => void) => void } }) {
-    server.middlewares.use('/admin.html', (_req, res) => {
-      res.statusCode = 302
-      res.setHeader('Location', ADMIN_REDIRECT_TARGET)
-      res.end()
-    })
-  },
-  configurePreviewServer(server: { middlewares: { use: (path: string, cb: (_req: unknown, res: { statusCode: number; setHeader: (name: string, value: string) => void; end: () => void }) => void) => void } }) {
-    server.middlewares.use('/admin.html', (_req, res) => {
-      res.statusCode = 302
-      res.setHeader('Location', ADMIN_REDIRECT_TARGET)
-      res.end()
-    })
-  },
-  generateBundle() {
-    this.emitFile({
-      type: 'asset',
-      fileName: 'admin.html',
-      source: adminRedirectHtml,
-    })
-  },
-})
-
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), syncAmplifyOutputs(), adminRedirect()],
+  plugins: [react(), syncAmplifyOutputs()],
   publicDir: 'public',
   build: {
     outDir: 'dist',
@@ -78,6 +53,7 @@ export default defineConfig({
         content: resolve(__dirname, 'content.html'),
         membership: resolve(__dirname, 'membership.html'),
         partnership: resolve(__dirname, 'partnership.html'),
+        post: resolve(__dirname, 'post.html'),
         transparency: resolve(__dirname, 'transparency.html'),
         youtube: resolve(__dirname, 'youtube.html'),
       },

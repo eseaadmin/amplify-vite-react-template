@@ -13,22 +13,24 @@
     .filter-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px; }
     .filter-btn { padding:8px 18px; border-radius:20px; border:1.5px solid var(--gray-30); background:#fff; font-size:.85rem; font-weight:600; cursor:pointer; transition:all .15s; color:var(--gray-70); }
     .filter-btn.active, .filter-btn:hover { background:var(--primary); color:#fff; border-color:var(--primary); }
-    .report-card { display:grid; grid-template-columns:auto 1fr auto; gap:20px; align-items:center; padding:24px; background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); transition:all .2s; margin-bottom:12px; }
+    .report-card { display:flex; gap:20px; align-items:flex-start; padding:24px; background:#fff; border:1px solid var(--gray-30); border-radius:var(--radius); transition:all .2s; margin-bottom:12px; }
+    .report-card[hidden] { display:none !important; }
     .report-card:hover { box-shadow:var(--shadow); border-color:transparent; }
     .report-num { width:56px; height:56px; background:var(--primary-lt); color:var(--primary); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; font-size:1.1rem; font-weight:900; }
+    .report-body { flex:1; min-width:0; }
     .report-body .title { font-weight:700; color:var(--dark); font-size:1.02rem; margin-bottom:4px; }
     .report-body .meta  { font-size:.82rem; color:var(--gray-50); display:flex; gap:12px; flex-wrap:wrap; }
-    .report-action { display:flex; gap:8px; }
-    .report-detail { display:block; grid-column:2 / -1; border-top:1px solid var(--gray-20); padding-top:18px; color:#374151; line-height:1.75; }
-    .report-card.collapsed .report-detail { display:none; }
-    .report-detail h2, .report-detail h3 { color:var(--dark); font-weight:800; margin:18px 0 8px; }
-    .report-detail p, .report-detail ul, .report-detail ol, .report-detail blockquote { margin:10px 0; }
-    .report-detail ul, .report-detail ol { padding-left:22px; }
-    .report-detail blockquote { border-left:4px solid var(--primary); padding-left:14px; color:#4b5563; }
+    .report-action { flex-shrink:0; }
+    .report-content { display:block !important; margin-top:14px; padding-top:14px; border-top:1px solid #e5e7eb; color:#374151; line-height:1.75; }
+    .report-content h2, .report-content h3 { color:var(--dark); font-weight:800; margin:18px 0 8px; }
+    .report-content p, .report-content ul, .report-content ol, .report-content blockquote { margin:10px 0; }
+    .report-content ul, .report-content ol { padding-left:22px; }
+    .report-content blockquote { border-left:4px solid var(--primary); padding-left:14px; color:#4b5563; }
     @media (max-width:768px) {
-      .report-card { grid-template-columns:1fr; }
+      .report-card { flex-direction:column; gap:14px; }
       .report-num { width:44px; height:44px; }
-      .report-detail { grid-column:1; }
+      .report-action { width:100%; }
+      .report-action .btn { width:100%; justify-content:center; }
     }
     .subscribe-box { background:linear-gradient(135deg,#f0fdf4,#e6f4f1); border:1.5px solid #86efac; border-radius:var(--radius-lg); padding:32px; margin-bottom:48px; }
   </style>
@@ -107,26 +109,6 @@
 <section style="background:#fff; padding-top:32px;">
   <div class="container">
 
-    <!-- 요약 통계 -->
-    <div class="card-grid card-grid-4" style="margin-bottom:48px;">
-      <div style="text-align:center; padding:20px; background:#f8fafc; border-radius:var(--radius);" class="fade-in">
-        <div style="font-size:2rem; font-weight:900; color:var(--primary);" data-count="15">0</div>
-        <div style="font-size:.85rem; color:#6b7280; margin-top:4px;">총 콜로키움</div>
-      </div>
-      <div style="text-align:center; padding:20px; background:#fee2e2; border-radius:var(--radius);" class="fade-in">
-        <div style="font-size:2rem; font-weight:900; color:#b91c1c;" data-count="4">0</div>
-        <div style="font-size:.85rem; color:#b91c1c; margin-top:4px;">2026 긴급진단</div>
-      </div>
-      <div style="text-align:center; padding:20px; background:#f8fafc; border-radius:var(--radius);" class="fade-in">
-        <div style="font-size:2rem; font-weight:900; color:var(--primary);" data-count="2022">0</div>
-        <div style="font-size:.85rem; color:#6b7280; margin-top:4px;">설립연도</div>
-      </div>
-      <div style="text-align:center; padding:20px; background:#f8fafc; border-radius:var(--radius);" class="fade-in">
-        <div style="font-size:2rem; font-weight:900; color:var(--primary);">무료</div>
-        <div style="font-size:.85rem; color:#6b7280; margin-top:4px;">전체 공개</div>
-      </div>
-    </div>
-
     <!-- 필터 바 -->
     <div class="filter-bar fade-in">
       <button class="filter-btn active" data-filter="all">전체</button>
@@ -145,6 +127,9 @@
       <div class="briefings-list" id="briefings-긴급진단" data-cat-key="emergency">
         <div class="briefings-loading" style="color:#6b7280; font-size:.9rem; padding:24px; text-align:center;">불러오는 중...</div>
       </div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-outline briefing-load-more" data-cat-key="emergency">더 많은 글 보기</button>
+      </div>
     </div>
 
     <!-- 콜로키움 -->
@@ -155,6 +140,9 @@
       </h2>
       <div class="briefings-list" id="briefings-콜로키움" data-cat-key="colloquium">
         <div class="briefings-loading" style="color:#6b7280; font-size:.9rem; padding:24px; text-align:center;">불러오는 중...</div>
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-outline briefing-load-more" data-cat-key="colloquium">더 많은 글 보기</button>
       </div>
     </div>
 
@@ -167,6 +155,9 @@
       <div class="briefings-list" id="briefings-정책브리핑" data-cat-key="briefing">
         <div class="briefings-loading" style="color:#6b7280; font-size:.9rem; padding:24px; text-align:center;">불러오는 중...</div>
       </div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-outline briefing-load-more" data-cat-key="briefing">더 많은 글 보기</button>
+      </div>
     </div>
 
     <!-- 리포트 -->
@@ -177,6 +168,9 @@
       </h2>
       <div class="briefings-list" id="briefings-리포트" data-cat-key="report">
         <div class="briefings-loading" style="color:#6b7280; font-size:.9rem; padding:24px; text-align:center;">불러오는 중...</div>
+      </div>
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn btn-outline briefing-load-more" data-cat-key="report">더 많은 글 보기</button>
       </div>
     </div>
 
@@ -272,19 +266,38 @@
 <script src="/js/newsletter.js"></script>
 <script src="/js/briefings.js"></script>
 <script>
-  const CATEGORY_KEY_MAP = {
+  const PAGE_SIZE = 4;
+  const CATEGORY_ALIAS = {
     '긴급진단': 'emergency',
+    emergency: 'emergency',
     '콜로키움': 'colloquium',
+    colloquium: 'colloquium',
     '정책브리핑': 'briefing',
-    '리포트': 'report'
+    briefing: 'briefing',
+    '리포트': 'report',
+    report: 'report'
   };
-
+  const CATEGORY_LABEL = {
+    emergency: '긴급진단',
+    colloquium: '콜로키움',
+    briefing: '정책브리핑',
+    report: '리포트'
+  };
+  const CATEGORY_CONTAINER = {
+    emergency: 'briefings-긴급진단',
+    colloquium: 'briefings-콜로키움',
+    briefing: 'briefings-정책브리핑',
+    report: 'briefings-리포트'
+  };
+  const CATEGORY_ORDER = ['emergency', 'colloquium', 'briefing', 'report'];
   const CATEGORY_BADGES = {
-    '긴급진단': { bg:'#fee2e2', color:'#b91c1c', tagClass:'tag-red' },
-    '콜로키움': { bg:'var(--primary-lt)', color:'var(--primary)', tagClass:'tag-primary' },
-    '정책브리핑': { bg:'#f3f4f6', color:'#374151', tagClass:'' },
-    '리포트': { bg:'#ede9fe', color:'#5b21b6', tagClass:'' }
+    emergency: { bg:'#fee2e2', color:'#b91c1c', tagClass:'tag-red' },
+    colloquium: { bg:'var(--primary-lt)', color:'var(--primary)', tagClass:'tag-primary' },
+    briefing: { bg:'#f3f4f6', color:'#374151', tagClass:'' },
+    report: { bg:'#ede9fe', color:'#5b21b6', tagClass:'' }
   };
+  const briefingsByCategory = {};
+  const visibleByCategory = {};
 
   function escapeHtml(s='') {
     return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
@@ -317,22 +330,26 @@
     return template.innerHTML || '<p>전문 내용이 없습니다.</p>';
   }
 
-  function toggleBriefingContent(id, button) {
-    const card = document.getElementById(`briefing-${id}`);
-    if (!card) return;
-    const collapsed = card.classList.toggle('collapsed');
-    if (button) button.textContent = collapsed ? '전문 보기' : '접기';
+  function categoryKey(category) {
+    return CATEGORY_ALIAS[String(category || '').trim()] || '';
+  }
+
+  function sortDateValue(item) {
+    const date = item.publish_date || item.created_at || item.createdAt || 0;
+    return new Date(date).getTime() || 0;
   }
 
   function renderBriefingCard(b, index) {
-    const badge = CATEGORY_BADGES[b.category] || {};
+    const key = categoryKey(b.category);
+    const displayCategory = CATEGORY_LABEL[key] || b.category || '';
+    const badge = CATEGORY_BADGES[key] || {};
     const num = String(index + 1);
     const dateStr = b.publish_date || (b.created_at ? new Date(b.created_at).toISOString().slice(0,10) : (b.createdAt ? new Date(b.createdAt).toISOString().slice(0,10) : '-'));
-    const tagHtml = badge.tagClass ? `<span class="tag ${badge.tagClass}">${escapeHtml(b.category)}</span>` : '';
+    const tagHtml = badge.tagClass ? `<span class="tag ${badge.tagClass}">${escapeHtml(displayCategory)}</span>` : '';
     const author = b.author ? `<span>✍️ ${escapeHtml(b.author)}</span>` : '';
     const featured = b.is_featured ? `<span class="tag tag-accent">⭐ 대표</span>` : '';
     return `
-      <div class="report-card fade-in" id="briefing-${escapeHtml(b.id)}" data-category="${CATEGORY_KEY_MAP[b.category] || ''}">
+      <div class="report-card fade-in visible" id="briefing-${escapeHtml(b.id)}" data-category="${key}">
         <div class="report-num" style="background:${badge.bg}; color:${badge.color};">${num}</div>
         <div class="report-body">
           <div class="title">${escapeHtml(b.title)}</div>
@@ -343,22 +360,49 @@
             ${featured}
           </div>
           <p style="font-size:.88rem; color:#374151; margin-top:8px; line-height:1.65;">${escapeHtml(b.summary||'')}</p>
+          <div class="report-content">${sanitizeBriefingContent(b.content)}</div>
         </div>
         <div class="report-action">
-          <button type="button" class="btn btn-outline briefing-toggle" data-briefing-id="${escapeHtml(b.id)}" style="font-size:.82rem; padding:8px 14px;">접기</button>
+          <a href="post.html?type=briefing&id=${encodeURIComponent(b.id)}" class="btn btn-outline" style="font-size:.82rem; padding:8px 14px;">보기</a>
         </div>
-        <div class="report-detail">${sanitizeBriefingContent(b.content)}</div>
       </div>`;
   }
 
+  function updateLoadMoreButton(key) {
+    const button = document.querySelector(`.briefing-load-more[data-cat-key="${key}"]`);
+    if (!button) return;
+    const total = briefingsByCategory[key]?.length || 0;
+    const visible = visibleByCategory[key] || PAGE_SIZE;
+    button.style.display = total > visible ? 'inline-flex' : 'none';
+  }
+
+  function renderCategory(key) {
+    const container = document.getElementById(CATEGORY_CONTAINER[key]);
+    if (!container) return;
+
+    const list = briefingsByCategory[key] || [];
+    const visible = visibleByCategory[key] || PAGE_SIZE;
+    const visibleItems = list.slice(0, visible);
+
+    if (!visibleItems.length) {
+      container.innerHTML = `<div style="color:#6b7280; font-size:.9rem; padding:24px; text-align:center; background:#f8fafc; border-radius:var(--radius);">아직 등록된 ${CATEGORY_LABEL[key]} 콘텐츠가 없습니다.</div>`;
+      updateLoadMoreButton(key);
+      return;
+    }
+
+    container.innerHTML = visibleItems.map((b, i) => renderBriefingCard(b, i)).join('');
+    updateLoadMoreButton(key);
+    window.observeFadeIns?.(container);
+  }
+
   function applyFilter(filter) {
-    document.querySelectorAll('.report-card').forEach(card => {
-      card.style.display = (filter === 'all' || card.dataset.category === filter) ? 'grid' : 'none';
+    CATEGORY_ORDER.forEach(key => {
+      const section = document.getElementById(key);
+      if (section) section.hidden = !(filter === 'all' || key === filter);
     });
   }
 
   async function loadBriefings() {
-    const categories = ['긴급진단', '콜로키움', '정책브리핑', '리포트'];
     let items = [];
     try {
       items = await BriefingsAPI.listBriefings();
@@ -367,17 +411,12 @@
     }
     const published = items.filter(b => b.status !== '초안');
 
-    categories.forEach(cat => {
-      const container = document.getElementById(`briefings-${cat}`);
-      if (!container) return;
-      const list = published
-        .filter(b => b.category === cat)
-        .sort((a, b) => new Date(b.created_at || b.createdAt || 0) - new Date(a.created_at || a.createdAt || 0));
-      if (!list.length) {
-        container.innerHTML = `<div style="color:#6b7280; font-size:.9rem; padding:24px; text-align:center; background:#f8fafc; border-radius:var(--radius);">아직 등록된 ${cat} 콘텐츠가 없습니다.</div>`;
-        return;
-      }
-      container.innerHTML = list.map((b, i) => renderBriefingCard(b, i)).join('');
+    CATEGORY_ORDER.forEach(key => {
+      visibleByCategory[key] = PAGE_SIZE;
+      briefingsByCategory[key] = published
+        .filter(b => categoryKey(b.category) === key)
+        .sort((a, b) => sortDateValue(b) - sortDateValue(a));
+      renderCategory(key);
     });
 
     const activeBtn = document.querySelector('.filter-btn.active');
@@ -385,10 +424,7 @@
 
     if (location.hash.startsWith('#briefing-')) {
       const card = document.querySelector(location.hash);
-      const button = card?.querySelector('.report-action button');
       if (card) {
-        card.classList.remove('collapsed');
-        if (button) button.textContent = '접기';
         card.scrollIntoView({ block: 'start' });
       }
     }
@@ -402,10 +438,12 @@
     });
   });
 
-  document.addEventListener('click', (event) => {
-    const button = event.target.closest('.briefing-toggle');
-    if (!button) return;
-    toggleBriefingContent(button.dataset.briefingId, button);
+  document.querySelectorAll('.briefing-load-more').forEach(button => {
+    button.addEventListener('click', () => {
+      const key = button.dataset.catKey;
+      visibleByCategory[key] = (visibleByCategory[key] || PAGE_SIZE) + PAGE_SIZE;
+      renderCategory(key);
+    });
   });
 
   loadBriefings();

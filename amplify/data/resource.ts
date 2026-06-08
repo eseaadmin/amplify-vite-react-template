@@ -88,6 +88,37 @@ const schema = a.schema({
       is_featured: a.boolean(),
     })
     .authorization((allow) => [allow.publicApiKey()]),
+
+  Blog: a
+    .model({
+      title: a.string().required(),
+      category: a.string().required(),
+      created_at: a.string().required(),
+      publish_date: a.string(),
+      author: a.string(),
+      tags: a.string(),
+      emoji: a.string(),
+      summary: a.string(),
+      content: a.string(),
+      status: a.string(),
+      is_featured: a.boolean(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
+
+  Video: a
+    .model({
+      title: a.string().required(),
+      category: a.string().required(),
+      created_at: a.string().required(),
+      youtube_id: a.string().required(),
+      speaker: a.string(),
+      publish_date: a.string(),
+      duration: a.string(),
+      description: a.string(),
+      status: a.string(),
+      is_featured: a.boolean(),
+    })
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
